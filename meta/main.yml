@@ -1,3 +1,4 @@
+---
 galaxy_info:
   author: Denis Kadyshev
   description: Install/Configure netdata
@@ -7,7 +8,7 @@ galaxy_info:
     - name: Centos
       versions:
         - All
-  categories:
+  galaxy_tags:
     - monitoring
     - netdata
 

@@ -1,0 +1,13 @@
+---
+- name: Include install tasks
+  include: install.yml
+
+- name: Include config tasks
+  include: config.yml
+
+- name: Enable and start netdata service
+  systemd:
+    name: netdata
+    state: started
+    enabled: yes
+    daemon_reload: yes

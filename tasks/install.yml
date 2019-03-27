@@ -2,20 +2,20 @@
 
 - name: Download and install netdata
   block:
-  - name: create temporary file
-    tempfile:
-      state: file
-      suffix: temp
-    register: netdata_tmp
+    - name: create temporary file
+      tempfile:
+        state: file
+        suffix: temp
+      register: netdata_tmp
 
-  - name: Download netdata with check (sha256)
-    get_url:
-      url: "{{ netdata_tarball_url }}"
-      dest: "{{ netdata_tmp.path }}"
-      checksum: "{{ netdata_tarball_checksum }}"
+    - name: Download netdata with check (sha256)
+      get_url:
+        url: "{{ netdata_tarball_url }}"
+        dest: "{{ netdata_tmp.path }}"
+        checksum: "{{ netdata_tarball_checksum }}"
 
-  - name: Installing netdata
-    shell: sh "{{ netdata_tmp.path }}" --accept -- --dont-start-it
+    - name: Installing netdata
+      shell: sh "{{ netdata_tmp.path }}" --accept -- --dont-start-it
 
   always:
     - name: Remove temporary netdata file
@@ -36,11 +36,7 @@
 # TODO: configs here
 # /opt/netdata/var/log/netdata/error.log
 # /opt/netdata/etc/netdata/stream.conf
-# alarms default handler '/opt/netdata/usr/libexec/netdata/plugins.d/alarm-notify.sh', alarms default recipient 'root'
-
-- name: Enable and start netdata service
-  systemd:
-    name: netdata
-    state: started
-    enabled: yes
-    daemon_reload: yes
+#
+# alarms default handler
+#  '/opt/netdata/usr/libexec/netdata/plugins.d/alarm-notify.sh',
+#   alarms default recipient 'root'

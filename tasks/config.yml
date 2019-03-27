@@ -1,0 +1,11 @@
+---
+
+# https://github.com/netdata/netdata/tree/master/database#ksm
+- name: Enable KSM in kernel
+  copy:
+    src: etc/tmpfiles.d/ksm.conf
+    dest: /etc/tmpfiles.d
+    owner: root
+    group: root
+    mode: 0600
+  notify: apply tmpfiles.d

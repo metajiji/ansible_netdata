@@ -1,0 +1,11 @@
+---
+
+- name: restart netdata
+  become: yes
+  systemd:
+    name: netdata
+    state: restarted
+
+- name: apply tmpfiles.d
+  become: yes
+  shell: systemd-tmpfiles --create
