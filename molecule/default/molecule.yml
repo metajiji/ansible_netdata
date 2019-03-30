@@ -1,7 +1,7 @@
 ---
 
 platforms:
-  - name: molecule-netdata-01
+  - name: molecule-netdata-${CI_JOB_ID:-1}
     image: centos/systemd:latest
     pull: True
     volumes:

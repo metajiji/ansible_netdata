@@ -8,4 +8,4 @@
 
 - name: apply tmpfiles.d
   become: yes
-  shell: systemd-tmpfiles --create
+  command: systemd-tmpfiles --create

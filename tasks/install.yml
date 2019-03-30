@@ -1,5 +1,16 @@
 ---
 
+- name: Check that the netdata executable exists
+  stat:
+    path: /opt/netdata/INSTALLED.VERSION
+  register: netdata_installed_version
+
+- name: Read /opt/netdata/INSTALLED.VERSION file
+  slurp:
+    src: /opt/netdata/INSTALLED.VERSION
+  register: netdata_installed_version_string
+  when: netdata_installed_version.stat.exists
+
 - name: Download and install netdata
   block:
     - name: create temporary file
@@ -15,13 +26,20 @@
         checksum: "{{ netdata_tarball_checksum }}"
 
     - name: Installing netdata
-      shell: sh "{{ netdata_tmp.path }}" --accept -- --dont-start-it
+      command: sh "{{ netdata_tmp.path }}" --accept -- --dont-start-it
+
+    - name: Save /opt/netdata/INSTALLED.VERSION file
+      copy:
+        content: "{{ netdata_tarball_release }}"
+        dest: /opt/netdata/INSTALLED.VERSION
 
   always:
     - name: Remove temporary netdata file
       file:
         path: "{{ netdata_tmp.path }}"
         state: absent
+  when: not netdata_installed_version.stat.exists
+        or ((netdata_installed_version_string.content | default('') | b64decode) != netdata_tarball_release)
 
 # TODO: install required packages
 #- name: install required packages
