@@ -1,0 +1,5 @@
+- name: "Set proper ini variables in {{ inifile.path }}"
+  include_tasks: inifile.yml
+  loop_control:
+    loop_var: section
+  loop: "{{ inifile['data'].keys() | list }}"

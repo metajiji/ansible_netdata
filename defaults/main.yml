@@ -6,3 +6,19 @@ netdata_tarball_release: v1.13.0
 
 # yamllint disable-line rule:line-length
 netdata_tarball_url: "https://github.com/netdata/netdata/releases/download/{{ netdata_tarball_release }}/netdata-{{ netdata_tarball_release }}.gz.run"
+
+netdata_config_netdata_conf:
+  path: /opt/netdata/etc/netdata/netdata.conf
+  data:
+    registry:
+      enabled: "yes"
+      registry to announce: "http://localhost:19999"
+      memory mode: save
+      memory deduplication (ksm): yes
+    global:
+      update every: 5
+    web:
+      bind to: 127.0.0.1
+    plugin:proc:
+      # Disable IPVS check since we doesn't use ipvs by default
+      /proc/net/ip_vs/stats: "no"

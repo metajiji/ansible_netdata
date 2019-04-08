@@ -1,0 +1,11 @@
+- name: "Set proper ini variables for section: {{ section }}"
+  ini_file:
+    path: "{{ inifile['path'] }}"
+    section: "{{ section }}"
+    option: "{{ item.key }}"
+    value: "{{ item.value }}"
+    mode: 0600
+    owner: "{{ inifile.owner | default('netdata') }}"
+    group: "{{ inifile.group | default('netdata') }}"
+  loop: "{{ inifile['data'][section] | dict2items }}"
+  notify: restart netdata
