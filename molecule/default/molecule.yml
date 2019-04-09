@@ -10,10 +10,7 @@ platforms:
     stop_signal: "SIGRTMIN+3"
     privileged: true
     capabilities:
-      - SYS_ADMIN
-    restart_policy: on-failure
-    restart_retries: 1
-
+      - SYS_ADMIN  # For systemd
 provisioner:
   name: ansible
   log: True
@@ -30,19 +27,13 @@ provisioner:
     name: ansible-lint
     options:
       force-color: True
-
 verifier:
   name: testinfra
   lint:
     name: flake8
-  options:
-    vvv: true
-
 driver:
   name: docker
-
 lint:
   name: yamllint
-
 dependency:
   name: galaxy
