@@ -8,7 +8,7 @@
     src: "{{ netdata_stock_config_dir }}/{{ ymlfile.path }}"
     dest: "{{ netdata_user_config_dir }}/{{ ymlfile.path }}"
     remote_src: yes
-  when: stat_result.stat.exists == False
+  when: not stat_result.stat.exists
 
 - name: "Read yaml file {{ ymlfile.path }}"
   slurp:
