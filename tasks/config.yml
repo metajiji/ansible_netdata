@@ -10,8 +10,14 @@
     mode: 0600
   notify: apply tmpfiles.d
 
-- name: Set proper "netdata_config_*" variables for inifiles
+- name: Set proper "netdata_config_ini_*" variables for inifiles
   include_tasks: loop_inifiles.yml
   loop_control:
     loop_var: inifile
-  loop: "{{ vars | select('match', 'netdata_config_') | map('extract', vars) | list }}"
+  loop: "{{ vars | select('match', 'netdata_config_ini_') | map('extract', vars) | list }}"
+
+- name: Set proper "netdata_config_yml_*" variables for yaml files
+  include_tasks: loop_ymlfiles.yml
+  loop_control:
+    loop_var: ymlfile
+  loop: "{{ vars | select('match', 'netdata_config_yml_') | map('extract', vars) | list }}"

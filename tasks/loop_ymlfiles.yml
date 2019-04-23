@@ -1,0 +1,23 @@
+- name: "Check that the {{ ymlfile.path }} exists"
+  stat:
+    path: "{{ netdata_user_config_dir }}/{{ ymlfile.path }}"
+  register: stat_result
+
+- name: "Copy the {{ ymlfile.path }} file, if it doesnt exist already"
+  copy:
+    src: "{{ netdata_stock_config_dir }}/{{ ymlfile.path }}"
+    dest: "{{ netdata_user_config_dir }}/{{ ymlfile.path }}"
+    remote_src: yes
+  when: stat_result.stat.exists == False
+
+- name: "Read yaml file {{ ymlfile.path }}"
+  slurp:
+    src: "{{ netdata_user_config_dir }}/{{ ymlfile.path }}"
+  register: yml_data
+
+- name: "Set yaml data to file {{ ymlfile.path }}"
+  copy:
+    dest: "{{ netdata_user_config_dir }}/{{ ymlfile.path }}"
+    content: "{{ yml_data | combine(ymlfile.data, recursive=True) | to_nice_yaml }}"
+  vars:
+    yml_data: "{{ yml_data.content | default('') | b64decode | from_yaml }}"

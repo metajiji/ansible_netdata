@@ -37,3 +37,9 @@ netdata_config_ini_fping_conf:
       hosts: 1.1.1.1
       ping_every: 200
   no_extra_spaces: yes
+
+netdata_config_yml_python_d_conf:
+  path: python.d.conf  # Relative path
+  data:
+    enabled: yes
+    mongodb: no
