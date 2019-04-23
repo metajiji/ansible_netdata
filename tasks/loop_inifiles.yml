@@ -1,3 +1,15 @@
+- name: "Check that the {{ inifile.path }} exists"
+  stat:
+    path: "{{ netdata_user_config_dir }}/{{ inifile.path }}"
+  register: stat_result
+
+- name: Create the file, if it doesnt exist already
+  copy:
+    src: "{{ netdata_stock_config_dir }}/{{ inifile.path }}"
+    dest: "{{ netdata_user_config_dir }}/{{ inifile.path }}"
+    remote_src: yes
+  when: stat_result.stat.exists == False
+
 - name: "Set proper ini variables in {{ inifile.path }}"
   include_tasks: inifile.yml
   loop_control:

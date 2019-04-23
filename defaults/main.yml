@@ -7,8 +7,14 @@ netdata_tarball_release: v1.13.0
 # yamllint disable-line rule:line-length
 netdata_tarball_url: "https://github.com/netdata/netdata/releases/download/{{ netdata_tarball_release }}/netdata-{{ netdata_tarball_release }}.gz.run"
 
-netdata_config_netdata_conf:
-  path: /opt/netdata/etc/netdata/netdata.conf
+# Can be: /usr/lib64/netdata/conf.d or /opt/netdata/usr/lib/netdata/conf.d
+netdata_stock_config_dir: /opt/netdata/usr/lib/netdata/conf.d
+
+# Can be: /etc/netdata or /opt/netdata/etc/netdata
+netdata_user_config_dir: /opt/netdata/etc/netdata
+
+netdata_config_ini_netdata_conf:
+  path: netdata.conf  # Relative path
   data:
     registry:
       enabled: "yes"
@@ -22,3 +28,12 @@ netdata_config_netdata_conf:
     plugin:proc:
       # Disable IPVS check since we doesn't use ipvs by default
       /proc/net/ip_vs/stats: "no"
+
+netdata_config_ini_fping_conf:
+  path: fping.conf  # Relative path
+  data:
+    null:
+      fping: /opt/netdata/bin/fping
+      hosts: 1.1.1.1
+      ping_every: 200
+  no_extra_spaces: yes
