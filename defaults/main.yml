@@ -42,4 +42,5 @@ netdata_config_yml_python_d_conf:
   path: python.d.conf  # Relative path
   data:
     enabled: yes
+    default_run: no  # default for all modules is disabled (no)
     mongodb: no
