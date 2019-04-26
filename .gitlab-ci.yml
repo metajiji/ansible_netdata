@@ -2,6 +2,7 @@ stages:
   - test
 
 molecule:
+  stage: test
   image: $CI_REGISTRY/docker/molecule/alpine
   before_script:
     - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY
