@@ -9,3 +9,4 @@
 - name: apply tmpfiles.d
   become: yes
   command: systemd-tmpfiles --create
+  when: not ansible_virtualization_type in ['docker', 'lxc']
