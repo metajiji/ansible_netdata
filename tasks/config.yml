@@ -2,8 +2,8 @@
 
 - name: Enable KSM in kernel
   template:
-    src: etc/tmpfiles.d/ksm.conf
-    dest: /etc/tmpfiles.d
+    src: etc/tmpfiles.d/ksm.conf.j2
+    dest: /etc/tmpfiles.d/ksm.conf
     owner: root
     group: root
     mode: 0644
