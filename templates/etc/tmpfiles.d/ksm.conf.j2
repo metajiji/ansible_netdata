@@ -1,0 +1,8 @@
+{{ ansible_managed | comment(decoration="#") }}
+
+# Manually exec tmpfiles rules:
+# sudo systemd-tmpfiles --create
+
+{% for parameter, value in netdata_ksm_config.items() %}
+w {{ netdata_ksm_sys_path | regex_replace('\\/$', '') }}/{{ parameter }} - - - - {{ value }}
+{% endfor %}

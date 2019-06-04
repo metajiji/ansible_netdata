@@ -1,14 +1,15 @@
 ---
 
-# https://github.com/netdata/netdata/tree/master/database#ksm
 - name: Enable KSM in kernel
-  copy:
+  template:
     src: etc/tmpfiles.d/ksm.conf
     dest: /etc/tmpfiles.d
     owner: root
     group: root
-    mode: 0600
+    mode: 0644
   notify: apply tmpfiles.d
+  when:
+    - netdata_ksm_enabled
 
 - name: Set proper "netdata_config_ini_*" variables for inifiles
   include_tasks: loop_inifiles.yml

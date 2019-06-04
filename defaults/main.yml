@@ -1,8 +1,8 @@
 ---
 
 # https://github.com/netdata/netdata/blob/master/packaging/installer/kickstart-static64.sh
-netdata_tarball_checksum: "sha256:f5fa2c8a9a354e09d19806ca0d596b461708026979cc12589290e11d72bdfaaa"
-netdata_tarball_release: v1.13.0
+netdata_tarball_checksum: "sha256:f499c010af866e380b5972e75dcceae00393d8a470bb485c0a2e9a111277f631"
+netdata_tarball_release: v1.15.0
 
 # yamllint disable-line rule:line-length
 netdata_tarball_url: "https://github.com/netdata/netdata/releases/download/{{ netdata_tarball_release }}/netdata-{{ netdata_tarball_release }}.gz.run"
@@ -12,6 +12,18 @@ netdata_stock_config_dir: /opt/netdata/usr/lib/netdata/conf.d
 
 # Can be: /etc/netdata or /opt/netdata/etc/netdata
 netdata_user_config_dir: /opt/netdata/etc/netdata
+
+#
+# https://www.kernel.org/doc/Documentation/vm/ksm.txt
+# https://github.com/netdata/netdata/tree/master/database#ksm
+#
+# Can be: yes or no
+netdata_ksm_enabled: yes
+netdata_ksm_sys_path: /sys/kernel/mm/ksm
+netdata_ksm_config:
+  run: 1
+  sleep_millisecs: 1000
+  pages_to_scan: 100
 
 netdata_config_ini_netdata_conf:
   path: netdata.conf  # Relative path
