@@ -14,3 +14,9 @@ def test_netdata_running_and_enabled(host):
 def test_netdata_is_listen(host):
     socket = host.socket('tcp://127.0.0.1:19999')
     assert socket.is_listening
+
+def test_netdata_is_ok(host):
+    command = "curl -fsSL http://localhost:19999"
+    cmd = host.run(command)
+    assert cmd.rc == 0
+    assert 'https://github.com/netdata/netdata' in cmd.stdout
