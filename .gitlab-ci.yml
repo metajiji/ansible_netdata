@@ -5,7 +5,6 @@ molecule:
   stage: test
   image: $CI_REGISTRY/docker/molecule/alpine
   before_script:
-    - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY
     - git config --global
       url."$(expr match "$CI_REPOSITORY_URL" '\(.\+://[^/]*\)')/".insteadOf
       "git@$(expr match "$CI_REPOSITORY_URL" '.\+://.\+@\([^/]*\)'):"
