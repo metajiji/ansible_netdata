@@ -1,5 +1,4 @@
 ---
-
 - name: Enable KSM in kernel
   template:
     src: etc/tmpfiles.d/ksm.conf.j2
@@ -9,16 +8,25 @@
     mode: 0644
   notify: apply tmpfiles.d
   when:
-    - netdata_ksm_enabled
+    - netdata_ksm_enabled | bool
 
-- name: Set proper "netdata_config_ini_*" variables for inifiles
+- name: Set variables for "netdata_config_ini_*"
   include_tasks: loop_inifiles.yml
   loop_control:
     loop_var: inifile
   loop: "{{ vars | select('match', 'netdata_config_ini_') | map('extract', vars) | list }}"
 
-- name: Set proper "netdata_config_yml_*" variables for yaml files
+- name: Set variables for "netdata_config_yml_*"
   include_tasks: loop_ymlfiles.yml
   loop_control:
     loop_var: ymlfile
   loop: "{{ vars | select('match', 'netdata_config_yml_') | map('extract', vars) | list }}"
+
+- name: Disable telemetry (send anonymous statistic)
+  file:
+    path: "{{ netdata_user_config_dir }}/.opt-out-from-anonymous-statistics"
+    state: touch
+    mode: 0644
+    modification_time: preserve
+    access_time: preserve
+  when: netdata_telemetry | bool

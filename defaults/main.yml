@@ -25,6 +25,21 @@ netdata_ksm_config:
   sleep_millisecs: 1000
   pages_to_scan: 100
 
+netdata_required_packages_extra: []
+netdata_required_packages: []
+
+netdata_rpm_packages_extra: []
+netdata_rpm_packages:
+  - iproute
+  - nmap-ncat
+  - lm_sensors
+  - python
+  - python-dns
+  - python-ipaddress
+
+# Anonymous statistics disabled by default
+netdata_telemetry: no
+
 netdata_config_ini_netdata_conf:
   path: netdata.conf  # Relative path
   data:
@@ -53,6 +68,7 @@ netdata_config_ini_fping_conf:
 netdata_config_yml_python_d_conf:
   path: python.d.conf  # Relative path
   data:
-    enabled: yes
-    default_run: no  # default for all modules is disabled (no)
-    mongodb: no
+    enabled: true  # Enable / disable the whole python.d.plugin (all its modules)
+    default_run: true  # default for all modules is disabled (no), default: true
+    example: false
+    chrony: true
