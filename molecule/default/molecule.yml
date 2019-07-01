@@ -3,7 +3,7 @@
 platforms:
   - name: molecule-netdata-${CI_JOB_ID:-1}
     image: centos/systemd:latest
-    pull: True
+    pull: true
     volumes:
       - "/sys/fs/cgroup:/sys/fs/cgroup:ro"
     command: /usr/sbin/init
@@ -13,20 +13,20 @@ platforms:
       - SYS_ADMIN  # For systemd
 provisioner:
   name: ansible
-  log: True
+  log: true
   options:
-    vvv: False
+    vvv: false
   config_options:
     defaults:
       stdout_callback: debug
-      error_on_undefined_vars: True
+      error_on_undefined_vars: true
       callback_whitelist: profile_tasks
     diff:
-      always: True
+      always: true
   lint:
     name: ansible-lint
     options:
-      force-color: True
+      force-color: true
 verifier:
   name: testinfra
   lint:
