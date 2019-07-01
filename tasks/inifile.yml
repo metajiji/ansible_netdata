@@ -1,4 +1,5 @@
-- name: "Set proper ini variables for section: {{ section }}"
+---
+- name: "Set ini variables for {{ inifile['path'] | basename }} in section: {{ section }}"
   ini_file:
     path: "{{ netdata_user_config_dir }}/{{ inifile['path'] }}"
     section: "{{ section }}"
@@ -8,5 +9,5 @@
     owner: "{{ inifile.owner | default('netdata') }}"
     group: "{{ inifile.group | default('netdata') }}"
     no_extra_spaces: "{{ inifile.no_extra_spaces | default(False) }}"
-  loop: "{{ inifile['data'][section] | dict2items }}"
+  loop: "{{ rendered_inifile_data[section] | dict2items }}"
   notify: restart netdata
