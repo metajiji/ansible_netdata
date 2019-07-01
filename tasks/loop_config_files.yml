@@ -1,5 +1,5 @@
 ---
-- name: "Check that the user {{ configfile.path }} exists"
+- name: Check that the user {{ configfile.path }} exists
   stat:
     path: "{{ netdata_user_config_dir }}/{{ configfile.path }}"
     get_mime: false
@@ -7,7 +7,7 @@
     get_attributes: false
   register: user_configfile_stat
 
-- name: "Check that the stock {{ configfile.path }} exists"
+- name: Check that the stock {{ configfile.path }} exists
   stat:
     path: "{{ netdata_stock_config_dir }}/{{ configfile.path }}"
     get_mime: false
@@ -21,12 +21,12 @@
     state: directory
     mode: 0755
 
-- name: "Copy the stock {{ configfile.path }} file if it doesn't exist already"
+- name: Copy the stock {{ configfile.path }} file if it doesn't exist already
   copy:
     src: "{{ netdata_stock_config_dir }}/{{ configfile.path }}"
     dest: "{{ netdata_user_config_dir }}/{{ configfile.path }}"
     remote_src: true
   when: not user_configfile_stat.stat.exists and stock_configfile_stat.stat.exists
 
-- name: "Processing file type: {{ configfile.type }} for file {{ configfile.path }}"
+- name: Processing file type {{ configfile.type }} for file {{ configfile.path }}
   include_tasks: "{{ 'netdata_config_%s.yml' | format(configfile.type) }}"
