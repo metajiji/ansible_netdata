@@ -17,8 +17,8 @@ netdata_user_config_dir: /opt/netdata/etc/netdata
 # https://www.kernel.org/doc/Documentation/vm/ksm.txt
 # https://github.com/netdata/netdata/tree/master/database#ksm
 #
-# Can be: yes or no
-netdata_ksm_enabled: yes
+# Boolean can be: true or false
+netdata_ksm_enabled: true
 netdata_ksm_sys_path: /sys/kernel/mm/ksm
 netdata_ksm_config:
   run: 1
@@ -37,25 +37,28 @@ netdata_rpm_packages:
   - python-dns
   - python-ipaddress
 
+#
 # Anonymous statistics disabled by default
-netdata_telemetry: no
+# https://docs.netdata.cloud/docs/anonymous-statistics/
+#
+netdata_telemetry: false
 
 netdata_config_netdata_conf:
   type: ini  # Can be ini or yml
   path: netdata.conf  # Relative path
   data:
     registry:
-      enabled: "yes"
+      enabled: false
       registry to announce: "http://localhost:19999"
       memory mode: save
-      memory deduplication (ksm): yes
+      memory deduplication (ksm): "{{ netdata_ksm_enabled | bool }}"
     global:
       update every: 5
     web:
       bind to: 127.0.0.1
     plugin:proc:
       # Disable IPVS check since we doesn't use ipvs by default
-      /proc/net/ip_vs/stats: "no"
+      /proc/net/ip_vs/stats: "no"  # should be string for idempotence
 
 netdata_config_fping_conf:
   type: ini
@@ -65,7 +68,7 @@ netdata_config_fping_conf:
       fping: /opt/netdata/bin/fping
       hosts: 1.1.1.1
       ping_every: 200
-  no_extra_spaces: yes
+  no_extra_spaces: true
 
 netdata_config_python_d_conf:
   type: yml
