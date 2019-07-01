@@ -10,17 +10,11 @@
   when:
     - netdata_ksm_enabled | bool
 
-- name: Set variables for "netdata_config_ini_*"
-  include_tasks: loop_inifiles.yml
+- name: Set variables for "netdata_config_*" variables
+  include_tasks: loop_config_files.yml
   loop_control:
-    loop_var: inifile
-  loop: "{{ vars | select('match', 'netdata_config_ini_') | map('extract', vars) | list }}"
-
-- name: Set variables for "netdata_config_yml_*"
-  include_tasks: loop_ymlfiles.yml
-  loop_control:
-    loop_var: ymlfile
-  loop: "{{ vars | select('match', 'netdata_config_yml_') | map('extract', vars) | list }}"
+    loop_var: configfile
+  loop: "{{ vars | select('match', 'netdata_config_') | map('extract', vars) | list }}"
 
 - name: Disable telemetry (send anonymous statistic)
   file:

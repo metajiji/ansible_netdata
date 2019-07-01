@@ -1,0 +1,13 @@
+---
+- name: "Read yaml file {{ configfile.path }}"
+  slurp:
+    src: "{{ netdata_user_config_dir }}/{{ configfile.path }}"
+  register: yml_file_data
+  when: stock_configfile_stat.stat.exists
+
+- name: "Set yaml data to file {{ configfile.path }}"
+  copy:
+    dest: "{{ netdata_user_config_dir }}/{{ configfile.path }}"
+    content: "{{ yml_data | default({}, true) | combine(configfile.data, recursive=True) | to_nice_yaml }}"
+  vars:
+    yml_data: "{{ yml_file_data.content | default('') | b64decode | from_yaml }}"

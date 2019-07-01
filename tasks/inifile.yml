@@ -1,13 +1,13 @@
 ---
-- name: "Set ini variables for {{ inifile['path'] | basename }} in section: {{ section }}"
+- name: "Set ini variables for {{ configfile['path'] | basename }} in section: {{ section }}"
   ini_file:
-    path: "{{ netdata_user_config_dir }}/{{ inifile['path'] }}"
+    path: "{{ netdata_user_config_dir }}/{{ configfile['path'] }}"
     section: "{{ section }}"
     option: "{{ item.key }}"
     value: "{{ item.value }}"
     mode: 0600
-    owner: "{{ inifile.owner | default('netdata') }}"
-    group: "{{ inifile.group | default('netdata') }}"
-    no_extra_spaces: "{{ inifile.no_extra_spaces | default(False) }}"
+    owner: "{{ configfile.owner | default('netdata') }}"
+    group: "{{ configfile.group | default('netdata') }}"
+    no_extra_spaces: "{{ configfile.no_extra_spaces | default(False) }}"
   loop: "{{ rendered_inifile_data[section] | dict2items }}"
   notify: restart netdata
