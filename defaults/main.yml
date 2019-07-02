@@ -3,7 +3,6 @@
 # https://github.com/netdata/netdata/blob/master/packaging/installer/kickstart-static64.sh
 netdata_tarball_checksum: "sha256:f499c010af866e380b5972e75dcceae00393d8a470bb485c0a2e9a111277f631"
 netdata_tarball_release: v1.15.0
-
 # yamllint disable-line rule:line-length
 netdata_tarball_url: "https://github.com/netdata/netdata/releases/download/{{ netdata_tarball_release }}/netdata-{{ netdata_tarball_release }}.gz.run"
 
@@ -49,13 +48,17 @@ netdata_config_netdata_conf:
   data:
     registry:
       enabled: false
-      registry to announce: "http://localhost:19999"
+      registry to announce: http://localhost:19999
       memory mode: save
       memory deduplication (ksm): "{{ netdata_ksm_enabled | bool }}"
     global:
       update every: 5
     web:
       bind to: 127.0.0.1
+    plugins:
+      PATH environment variable: /opt/netdata/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+      # List of plugins enabled & configured https://docs.netdata.cloud/collectors/
+      node.d: false
     plugin:proc:
       # Disable IPVS check since we doesn't use ipvs by default
       /proc/net/ip_vs/stats: "no"  # should be string for idempotence
@@ -65,10 +68,16 @@ netdata_config_fping_conf:
   path: fping.conf  # Relative path
   data:
     null:
-      fping: /opt/netdata/bin/fping
       hosts: 1.1.1.1
       ping_every: 200
   no_extra_spaces: true
+
+netdata_config_go_d_conf:
+  type: yml
+  path: go.d.conf  # Relative path
+  data:
+    modules:
+      example: false
 
 netdata_config_python_d_conf:
   type: yml
@@ -76,5 +85,71 @@ netdata_config_python_d_conf:
   data:
     enabled: true  # Enable / disable the whole python.d.plugin (all its modules)
     default_run: true  # default for all modules is disabled (no), default: true
-    example: false
+    adaptec_raid: true
+    apache: false  # See go.d plugin instead
+    apache_cache: false  # by default
+    beanstalk: true
+    bind_rndc: true
+    boinc: true
+    ceph: true
     chrony: true
+    couchdb: true
+    dns_query_time: false  # See go.d plugin instead
+    dnsdist: true
+    dockerd: true
+    dovecot: true
+    elasticsearch: true
+    energid: true
+    example: false  # by default
+    exim: true
+    fail2ban: true
+    freeradius: false  # See go.d plugin instead
+    go_expvar: false  # by default
+    gunicorn_log: false  # by default
+    haproxy: true
+    hddtemp: true
+    httpcheck: false  # See go.d plugin instead
+    icecast: true
+    ipfs: true
+    isc_dhcpd: true
+    litespeed: true
+    logind: false  # by default
+    megacli: true
+    memcached: true
+    mongodb: true
+    monit: true
+    mysql: false  # See go.d plugin instead
+    nginx: false  # See go.d plugin instead
+    nginx_log: false  # by default
+    nginx_plus: false  # See go.d plugin instead
+    nsd: true
+    ntpd: true
+    nvidia_smi: true
+    openldap: true
+    oracledb: true
+    ovpn_status_log: true
+    phpfpm: true
+    portcheck: false  # See go.d plugin instead
+    postfix: true
+    postgres: true
+    powerdns: true
+    proxysql: true
+    puppet: true
+    rabbitmq: false  # See go.d plugin instead
+    redis: true
+    rethinkdbs: true
+    retroshare: true
+    samba: true
+    sensors: true
+    smartd_log: true
+    spigotmc: true
+    springboot: true
+    squid: true
+    tomcat: true
+    tor: true
+    traefik: true
+    unbound: true  # by default: false
+    uwsgi: true
+    varnish: true
+    w1sensor: true
+    web_log: false  # See go.d plugin instead
