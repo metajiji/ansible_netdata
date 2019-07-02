@@ -69,7 +69,6 @@ netdata_config_fping_conf:
   data:
     null:
       hosts: 1.1.1.1
-      ping_every: 200
   no_extra_spaces: true
 
 netdata_config_go_d_conf:
