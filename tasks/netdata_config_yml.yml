@@ -5,9 +5,14 @@
   register: yml_file_data
   when: stock_configfile_stat.stat.exists
 
+# Workaround with ansible nested variables
+- name: Render ansible variables for yml {{ configfile.path | basename }}
+  set_fact:
+    rendered_ymlfile_data: "{{ lookup('template', 'render_ymlfile_data.j2') }}"
+
 - name: Set yaml data to file {{ configfile.path }}
   copy:
     dest: "{{ netdata_user_config_dir }}/{{ configfile.path }}"
-    content: "{{ yml_data | default({}, true) | combine(configfile.data, recursive=True) | to_nice_yaml }}"
+    content: "{{ yml_data | default({}, true) | combine(rendered_ymlfile_data, recursive=True) | to_nice_yaml }}"
   vars:
     yml_data: "{{ yml_file_data.content | default('') | b64decode | from_yaml }}"
