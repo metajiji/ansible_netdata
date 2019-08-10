@@ -1,8 +1,8 @@
 ---
 
 # https://github.com/netdata/netdata/blob/master/packaging/installer/kickstart-static64.sh
-netdata_tarball_checksum: "sha256:f499c010af866e380b5972e75dcceae00393d8a470bb485c0a2e9a111277f631"
-netdata_tarball_release: v1.15.0
+netdata_tarball_checksum: "sha256:29b00c245d510f113538d3729f9ac5538e3fe52b9817c38abf3bb53808e73e9a"
+netdata_tarball_release: v1.16.0
 # yamllint disable-line rule:line-length
 netdata_tarball_url: "https://github.com/netdata/netdata/releases/download/{{ netdata_tarball_release }}/netdata-{{ netdata_tarball_release }}.gz.run"
 
