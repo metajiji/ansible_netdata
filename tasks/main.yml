@@ -6,8 +6,7 @@
   include: config.yml
 
 - name: Enable and start netdata service
-  systemd:
+  service:
     name: netdata
     state: started
     enabled: yes
-    daemon_reload: yes

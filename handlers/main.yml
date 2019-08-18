@@ -2,7 +2,7 @@
 
 - name: restart netdata
   become: yes
-  systemd:
+  service:
     name: netdata
     state: restarted
 
