@@ -84,7 +84,7 @@ netdata_config_netdata_conf:
       node.d: false
     plugin:proc:
       # Disable IPVS check since we doesn't use ipvs by default
-      /proc/net/ip_vs/stats: "no"  # should be string for idempotence
+      /proc/net/ip_vs/stats: no
 
 netdata_config_fping_conf:
   type: ini
@@ -175,3 +175,10 @@ netdata_config_python_d_conf:
     varnish: true
     w1sensor: true
     web_log: false  # See go.d plugin instead
+
+netdata_config_python_d_chrony_conf:
+  type: yml
+  path: python.d/chrony.conf  # Relative path
+  data:
+    local:
+      command: 'timeout -k 5 3 chronyc -n tracking'
