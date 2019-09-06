@@ -1,2 +1,0 @@
-molecule[docker]
-docker==3.7.0
