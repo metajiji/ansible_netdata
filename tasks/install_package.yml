@@ -1,0 +1,26 @@
+---
+
+- name: Download netdata.repo file
+  become: true
+  get_url:
+    url: "{{ netdata_package_repo_file_url }}"
+    dest: "{{ netdata_package_repo_file_path }}"
+    mode: 0644
+    owner: root
+    group: root
+
+- name: Ensure "gpgcheck=1 is in section "[netdata_netdata]" in netdata.repo file
+  become: true
+  ini_file:
+    path: "{{ netdata_package_repo_file_path }}"
+    section: netdata_netdata
+    option: gpgcheck
+    value: 1
+    no_extra_spaces: true
+
+- name: Update yum cache
+  become: true
+  yum:
+    update_cache: true
+    disablerepo: '*'
+    enablerepo: netdata_netdata

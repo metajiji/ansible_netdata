@@ -1,12 +1,20 @@
 ---
 - name: Include install tasks
   include: install.yml
+  tags:
+    - install
 
 - name: Include config tasks
   include: config.yml
+  tags:
+    - configure
 
-- name: Enable and start netdata service
+- name: Ensure netdata service is started and enabled at boot
+  become: true
   service:
     name: netdata
     state: started
     enabled: yes
+  tags:
+    - configure
+    - install

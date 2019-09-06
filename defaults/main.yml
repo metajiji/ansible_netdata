@@ -1,16 +1,44 @@
 ---
 
+# Can be tarball or package
+netdata_installation_type: tarball
+netdata_release: 1.17.0
+
 # https://github.com/netdata/netdata/blob/master/packaging/installer/kickstart-static64.sh
-netdata_tarball_checksum: "sha256:29b00c245d510f113538d3729f9ac5538e3fe52b9817c38abf3bb53808e73e9a"
-netdata_tarball_release: v1.16.0
+netdata_tarball_checksum: "sha256:ea0aca245b642361de6feedd858991fce3ef4c0013b880829d9da3aed3c5300a"
+netdata_tarball_release: "v{{ netdata_release }}"
 # yamllint disable-line rule:line-length
 netdata_tarball_url: "https://github.com/netdata/netdata/releases/download/{{ netdata_tarball_release }}/netdata-{{ netdata_tarball_release }}.gz.run"
 
+# yamllint disable-line rule:line-length
+netdata_package_repo_file_url: "https://packagecloud.io/install/repositories/netdata/netdata/config_file.repo?os={{ ansible_distribution | lower }}&dist={{ ansible_distribution_major_version }}"
+netdata_package_repo_file_path: /etc/yum.repos.d/netdata_netdata.repo
+
+_netdata:
+  tarball:
+    stock_config_dir: /opt/netdata/usr/lib/netdata/conf.d
+    user_config_dir: /opt/netdata/etc/netdata
+    env_PATH: "/opt/netdata/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+    packages: &packages
+      - iproute
+      - nmap-ncat
+      - lm_sensors
+      - python
+      - python-dns
+      - python-ipaddress
+  package:
+    stock_config_dir: /usr/lib64/netdata/conf.d
+    user_config_dir: /etc/netdata
+    env_PATH: "/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+    packages:
+      - *packages
+      - "netdata-{{ netdata_release }}"
+
 # Can be: /usr/lib64/netdata/conf.d or /opt/netdata/usr/lib/netdata/conf.d
-netdata_stock_config_dir: /opt/netdata/usr/lib/netdata/conf.d
+netdata_stock_config_dir: "{{ _netdata[netdata_installation_type]['stock_config_dir'] }}"
 
 # Can be: /etc/netdata or /opt/netdata/etc/netdata
-netdata_user_config_dir: /opt/netdata/etc/netdata
+netdata_user_config_dir: "{{ _netdata[netdata_installation_type]['user_config_dir'] }}"
 
 #
 # https://www.kernel.org/doc/Documentation/vm/ksm.txt
@@ -25,16 +53,11 @@ netdata_ksm_config:
   pages_to_scan: 100
 
 netdata_required_packages_extra: []
-netdata_required_packages: []
+netdata_required_packages:
+  - epel-release
 
-netdata_rpm_packages_extra: []
-netdata_rpm_packages:
-  - iproute
-  - nmap-ncat
-  - lm_sensors
-  - python
-  - python-dns
-  - python-ipaddress
+netdata_packages_extra: []
+netdata_packages: "{{ _netdata[netdata_installation_type]['packages'] }}"
 
 #
 # Anonymous statistics disabled by default
@@ -56,7 +79,7 @@ netdata_config_netdata_conf:
     web:
       bind to: 127.0.0.1
     plugins:
-      PATH environment variable: /opt/netdata/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+      PATH environment variable: "{{ _netdata[netdata_installation_type]['env_PATH'] }}"
       # List of plugins enabled & configured https://docs.netdata.cloud/collectors/
       node.d: false
     plugin:proc:
