@@ -100,6 +100,7 @@ netdata_config_go_d_conf:
   data:
     modules:
       example: false
+      web_log: true  # Also see python.d plugin
 
 netdata_config_python_d_conf:
   type: yml
