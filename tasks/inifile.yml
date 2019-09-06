@@ -1,5 +1,6 @@
 ---
 - name: Set ini variables for {{ configfile.path | basename }} in section {{ section }}
+  become: true
   ini_file:
     path: "{{ netdata_user_config_dir }}/{{ configfile.path }}"
     section: "{{ section }}"

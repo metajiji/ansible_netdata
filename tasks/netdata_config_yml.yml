@@ -11,6 +11,8 @@
     rendered_ymlfile_data: "{{ lookup('template', 'render_ymlfile_data.j2') }}"
 
 - name: Set yaml data to file {{ configfile.path }}
+  become: true
+  notify: restart netdata
   copy:
     dest: "{{ netdata_user_config_dir }}/{{ configfile.path }}"
     content: "{{ yml_data | default({}, true) | combine(rendered_ymlfile_data, recursive=True) | to_nice_yaml }}"

@@ -1,5 +1,6 @@
 ---
 - name: Enable KSM in kernel
+  become: true
   template:
     src: etc/tmpfiles.d/ksm.conf.j2
     dest: /etc/tmpfiles.d/ksm.conf
@@ -17,6 +18,7 @@
   loop: "{{ vars | select('match', 'netdata_config_') | map('extract', vars) | list }}"
 
 - name: Disable telemetry (send anonymous statistic)
+  become: true
   file:
     path: "{{ netdata_user_config_dir }}/.opt-out-from-anonymous-statistics"
     state: touch

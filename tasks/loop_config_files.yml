@@ -16,12 +16,14 @@
   register: stock_configfile_stat
 
 - name: Ensure netdata user config directory is exists
+  become: true
   file:
     path: "{{ netdata_user_config_dir }}/{{ configfile.path | dirname }}"
     state: directory
     mode: 0755
 
 - name: Copy the stock {{ configfile.path }} file if it doesn't exist already
+  become: true
   copy:
     src: "{{ netdata_stock_config_dir }}/{{ configfile.path }}"
     dest: "{{ netdata_user_config_dir }}/{{ configfile.path }}"
