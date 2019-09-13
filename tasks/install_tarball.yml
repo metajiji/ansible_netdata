@@ -1,5 +1,21 @@
 ---
 
+- name: Ensure playbook_dir/files directory is exists
+  become: false
+  file:
+    path: "{{ playbook_dir }}/files"
+    state: directory
+    mode: 0755
+  delegate_to: localhost
+
+- name: Download netdata with check (sha256)
+  become: false
+  get_url:
+    url: "{{ netdata_tarball_url }}"
+    dest: "{{ playbook_dir }}/files/{{ netdata_tarball_url | basename }}"
+    checksum: "{{ netdata_tarball_checksum }}"
+  delegate_to: localhost
+
 - name: Check that the netdata executable exists
   become: true
   stat:
@@ -21,11 +37,10 @@
         suffix: temp
       register: netdata_tmp
 
-    - name: Download netdata with check (sha256)
-      get_url:
-        url: "{{ netdata_tarball_url }}"
+    - name: Copy netdata-installer from ansible controller
+      copy:
+        src: "{{ playbook_dir }}/files/{{ netdata_tarball_url | basename }}"
         dest: "{{ netdata_tmp.path }}"
-        checksum: "{{ netdata_tarball_checksum }}"
 
     - name: Installing netdata
       command: sh "{{ netdata_tmp.path }}" --accept -- --dont-start-it
