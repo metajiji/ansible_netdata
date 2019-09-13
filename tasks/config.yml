@@ -25,4 +25,4 @@
     mode: 0644
     modification_time: preserve
     access_time: preserve
-  when: netdata_telemetry | bool
+  when: not netdata_telemetry | bool
