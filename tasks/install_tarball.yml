@@ -2,6 +2,7 @@
 
 - name: Ensure playbook_dir/files directory is exists
   become: false
+  run_once: true
   file:
     path: "{{ playbook_dir }}/files"
     state: directory
@@ -10,6 +11,7 @@
 
 - name: Download netdata with check (sha256)
   become: false
+  run_once: true
   get_url:
     url: "{{ netdata_tarball_url }}"
     dest: "{{ playbook_dir }}/files/{{ netdata_tarball_url | basename }}"
