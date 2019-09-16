@@ -1,14 +1,5 @@
 ---
 
-- name: Ensure playbook_dir/files directory is exists
-  become: false
-  run_once: true
-  file:
-    path: "{{ playbook_dir }}/files"
-    state: directory
-    mode: 0755
-  delegate_to: localhost
-
 - name: Download netdata with check (sha256)
   become: false
   run_once: true
