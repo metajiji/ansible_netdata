@@ -2,11 +2,11 @@
 
 # Can be tarball or package
 netdata_installation_type: tarball
-netdata_release: 1.17.1
+netdata_release: 1.18.0
 
 # https://github.com/netdata/netdata/blob/master/packaging/installer/kickstart-static64.sh
-# curl -sL https://github.com/netdata/netdata/releases/download/v1.17.1/sha256sums.txt | grep gz.run
-netdata_tarball_checksum: "sha256:509e674a99f943ee3d3ddb7a0ce055635360fe46c81a5ca6ac8ea663464b422a"
+# curl -sL https://github.com/netdata/netdata/releases/download/v1.18.0/sha256sums.txt | grep gz.run
+netdata_tarball_checksum: "sha256:88ad7e0d38832acbbc8731eaf3deb48837df85f8bfe4b26c16cb1b2e910d9580"
 netdata_tarball_release: "v{{ netdata_release }}"
 # yamllint disable-line rule:line-length
 netdata_tarball_url: "https://github.com/netdata/netdata/releases/download/{{ netdata_tarball_release }}/netdata-{{ netdata_tarball_release }}.gz.run"
@@ -101,6 +101,11 @@ netdata_config_go_d_conf:
   data:
     modules:
       example: false
+      freeradius: true
+      mysql: true
+      nginx: true
+      phpfpm: true
+      rabbitmq: true
       web_log: true  # Also see python.d plugin
 
 netdata_config_python_d_conf:
@@ -152,7 +157,7 @@ netdata_config_python_d_conf:
     openldap: true
     oracledb: true
     ovpn_status_log: true
-    phpfpm: true
+    phpfpm: false  # See go.d plugin instead
     portcheck: false  # See go.d plugin instead
     postfix: true
     postgres: true
@@ -177,6 +182,7 @@ netdata_config_python_d_conf:
     varnish: true
     w1sensor: true
     web_log: false  # See go.d plugin instead
+    gearman: true
 
 netdata_config_python_d_chrony_conf:
   type: yml
