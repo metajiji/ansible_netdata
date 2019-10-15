@@ -102,7 +102,7 @@ netdata_config_go_d_conf:
     modules:
       example: false
       freeradius: true
-      mysql: true
+      mysql: false  # Disabled due bug SIGSEGV
       nginx: true
       phpfpm: true
       rabbitmq: true
