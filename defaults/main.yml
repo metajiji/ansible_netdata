@@ -72,14 +72,19 @@ netdata_config_netdata_conf:
   data:
     registry:
       enabled: false
-      registry to announce: http://localhost:19999
-      memory mode: save
-      memory deduplication (ksm): "{{ netdata_ksm_enabled | bool }}"
     global:
       update every: 5
+      history: 34560
+      memory deduplication (ksm): "{{ netdata_ksm_enabled | bool }}"
+      memory mode: dbengine  # https://docs.netdata.cloud/database/engine/
+      # All DB engine instances, for localhost and all other streaming recipient nodes inherit their configuration
+      dbengine disk space: 1024  # The amount of disk space in MiB that is dedicated to storing metric values
+      page cache size: 128  # The amount of RAM in MiB that is dedicated to caching metric values
     web:
       bind to: 127.0.0.1
     plugins:
+      enable running new plugins: true
+      check for new plugins every: 60
       PATH environment variable: "{{ _netdata[netdata_installation_type]['env_PATH'] }}"
       # List of plugins enabled & configured https://docs.netdata.cloud/collectors/
       node.d: false
