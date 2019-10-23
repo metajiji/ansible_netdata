@@ -82,6 +82,12 @@ netdata_config_netdata_conf:
       page cache size: 128  # The amount of RAM in MiB that is dedicated to caching metric values
     web:
       bind to: 127.0.0.1
+      allow connections from: localhost '*'
+      allow dashboard from: localhost '*'
+      allow badges from: '*'
+      allow streaming from: '*'
+      allow netdata.conf from: localhost
+      allow management from: localhost
     plugins:
       enable running new plugins: true
       check for new plugins every: 60
