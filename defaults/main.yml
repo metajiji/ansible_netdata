@@ -46,10 +46,10 @@ netdata_user_config_dir: "{{ _netdata[netdata_installation_type]['user_config_di
 # https://github.com/netdata/netdata/tree/master/database#ksm
 #
 # Boolean can be: true or false
-netdata_ksm_enabled: true
+netdata_ksm_enabled: false
 netdata_ksm_sys_path: /sys/kernel/mm/ksm
 netdata_ksm_config:
-  run: 1
+  run: "{{ netdata_ksm_enabled | ternary(1, 0) }}"
   sleep_millisecs: 1000
   pages_to_scan: 100
 

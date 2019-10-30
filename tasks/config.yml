@@ -8,8 +8,6 @@
     group: root
     mode: 0644
   notify: apply tmpfiles.d
-  when:
-    - netdata_ksm_enabled | bool
 
 - name: Set variables for "netdata_config_*" variables
   include_tasks: loop_config_files.yml
