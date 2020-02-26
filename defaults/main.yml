@@ -2,11 +2,11 @@
 
 # Can be tarball or package
 netdata_installation_type: tarball
-netdata_release: 1.19.0
+netdata_release: 1.20.0
 
 # https://github.com/netdata/netdata/blob/master/packaging/installer/kickstart-static64.sh
 # curl -sL https://github.com/netdata/netdata/releases/download/v1.19.0/sha256sums.txt | grep gz.run
-netdata_tarball_checksum: "sha256:a038ee77f8f405753e90a8062c39e36c1ecc0babae7cc5595cdffe0cff2de3e3"
+netdata_tarball_checksum: "sha256:5716693a670239a6665d07a07d01b9f224f4eafb7b444dde2cc2cbc56d206038"
 netdata_tarball_release: "v{{ netdata_release }}"
 # yamllint disable-line rule:line-length
 netdata_tarball_url: "https://github.com/netdata/netdata/releases/download/{{ netdata_tarball_release }}/netdata-{{ netdata_tarball_release }}.gz.run"
@@ -111,12 +111,20 @@ netdata_config_go_d_conf:
   path: go.d.conf  # Relative path
   data:
     modules:
-      example: false
-      freeradius: true
-      mysql: false  # Disabled due bug SIGSEGV
-      nginx: true
-      phpfpm: true
-      rabbitmq: true
+      apache: true  # Also see python.d plugin
+      bind: true  # Also see python.d plugin
+      docker_engine: true  # Also see python.d plugin
+      example: false  # false by default
+      freeradius: true  # Also see python.d plugin
+      httpcheck: true  # Also see python.d plugin
+      mysql: true  # TODO CHECKME: Disabled due bug SIGSEGV
+      nginx: true  # Also see python.d plugin
+      openvpn: true  # Also see python.d plugin
+      phpfpm: true  # Also see python.d plugin
+      portcheck: true  # Also see python.d plugin
+      rabbitmq: true  # Also see python.d plugin
+      springboot: true  # Also see python.d plugin
+      squidlog: true  # Also see python.d plugin
       web_log: true  # Also see python.d plugin
 
 netdata_config_python_d_conf:
@@ -126,48 +134,51 @@ netdata_config_python_d_conf:
     enabled: true  # Enable / disable the whole python.d.plugin (all its modules)
     default_run: true  # default for all modules is disabled (no), default: true
     adaptec_raid: true
+    am2320: true
     apache: false  # See go.d plugin instead
-    apache_cache: false  # by default
+    apache_cache: false  # false by default, has been replaced by web_log
     beanstalk: true
-    bind_rndc: true
+    bind_rndc: false  # See go.d plugin instead
     boinc: true
     ceph: true
     chrony: true
     couchdb: true
     dns_query_time: false  # See go.d plugin instead
     dnsdist: true
-    dockerd: true
+    dockerd: false  # See go.d plugin instead
     dovecot: true
     elasticsearch: true
     energid: true
-    example: false  # by default
+    example: false  # false by default
     exim: true
     fail2ban: true
     freeradius: false  # See go.d plugin instead
-    go_expvar: false  # by default
-    gunicorn_log: false  # by default
+    gearman: true
+    go_expvar: false  # false by default
+    gunicorn_log: false  # false by default, has been replaced by web_log
     haproxy: true
     hddtemp: true
+    hpssa: false  # false by default
     httpcheck: false  # See go.d plugin instead
     icecast: true
     ipfs: true
     isc_dhcpd: true
     litespeed: true
-    logind: false  # by default
+    logind: true  # false by default
     megacli: true
     memcached: true
     mongodb: true
     monit: true
     mysql: false  # See go.d plugin instead
     nginx: false  # See go.d plugin instead
-    nginx_log: false  # by default
+    nginx_log: false  # false by default, has been replaced by web_log
     nginx_plus: false  # See go.d plugin instead
     nsd: true
     ntpd: true
     nvidia_smi: true
     openldap: true
     oracledb: true
-    ovpn_status_log: true
+    ovpn_status_log: false  # See go.d plugin instead
     phpfpm: false  # See go.d plugin instead
     portcheck: false  # See go.d plugin instead
     postfix: true
@@ -179,25 +190,25 @@ netdata_config_python_d_conf:
     redis: true
     rethinkdbs: true
     retroshare: true
+    riakkv: true
     samba: true
     sensors: true
     smartd_log: true
     spigotmc: true
-    springboot: true
-    squid: true
+    springboot: false  # See go.d plugin instead
+    squid: false  # See go.d plugin instead
     tomcat: true
     tor: true
     traefik: true
-    unbound: true  # by default: false
+    unbound: false  # See go.d plugin instead
     uwsgi: true
     varnish: true
     w1sensor: true
     web_log: false  # See go.d plugin instead
-    gearman: true
 
 netdata_config_python_d_chrony_conf:
   type: yml
   path: python.d/chrony.conf  # Relative path
   data:
     local:
-      command: 'timeout -k 5 3 chronyc -n tracking'
+      command: timeout -k 5 3 chronyc -n tracking

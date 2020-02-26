@@ -16,10 +16,10 @@ For more info on the values, read `defaults/main.yml`
 | Variable   | Default | Comments (type)  |
 | :---       | :---    | :---             |
 | `netdata_installation_type` | `tarball` | `tarball` or `package` |
-| `netdata_release` | `1.18.1` | Type: string |
+| `netdata_release` | `1.20.0` | Type: string |
 | `netdata_tarball_checksum` | `sha256:xxx` | Type: string |
 | | | Is required for `tarball` installation type |
-| | | Can be obtained by command: `curl -sL https://github.com/netdata/netdata/releases/download/v1.18.1/sha256sums.txt \| grep gz.run` |
+| | | Can be obtained by command: `curl -sL https://github.com/netdata/netdata/releases/download/v1.20.0/sha256sums.txt \| grep gz.run` |
 | `netdata_stock_config_dir` | `/opt/netdata/usr/lib/netdata/conf.d` | For tarball: `/opt/netdata/usr/lib/netdata/conf.d` |
 | | | For package: `/usr/lib64/netdata/conf.d` |
 | `netdata_user_config_dir` | `/opt/netdata/etc/netdata` | For tarball: `/opt/netdata/etc/netdata` |
@@ -56,21 +56,17 @@ If `netdata_ksm_enabled` with `true` you can enable KSM manually:
 systemd-tmpfiles --create
 ```
 
-
 ## Contributing
 
 Issues, feature requests, ideas are can be appreciated
-
 
 ## License
 
 - [WTFPL](http://www.wtfpl.net/)
 
-
 ## Contributors
 
 - [Denis Kadyshev](https://github.com/metajiji/)
-
 
 ## Documentation
 
