@@ -1,0 +1,8 @@
+---
+netdata_packages:
+  - iproute
+  - nmap-ncat
+  - lm_sensors
+  - python
+  - python-dns
+  - python-ipaddress

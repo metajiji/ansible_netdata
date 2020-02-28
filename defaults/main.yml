@@ -15,24 +15,29 @@ netdata_tarball_url: "https://github.com/netdata/netdata/releases/download/{{ ne
 netdata_package_repo_file_url: "https://packagecloud.io/install/repositories/netdata/netdata/config_file.repo?os={{ ansible_distribution | lower }}&dist={{ ansible_distribution_major_version }}"
 netdata_package_repo_file_path: /etc/yum.repos.d/netdata_netdata.repo
 
+_netdata_os_distributions:
+  paths:
+    - "{{ role_path }}/defaults"
+  files:
+    - "{{ ansible_distribution | lower }}-{{ ansible_distribution_version }}.yml"
+    - "{{ ansible_distribution | lower }}-{{ ansible_distribution_major_version }}.yml"
+    - "{{ ansible_distribution | lower }}.yml"
+    - "{{ ansible_os_family | lower }}.yml"
+
+_os_defaults_vars: "{{ lookup('file', lookup('first_found', _netdata_os_distributions)) | from_yaml }}"
+
 _netdata:
   tarball:
     stock_config_dir: /opt/netdata/usr/lib/netdata/conf.d
     user_config_dir: /opt/netdata/etc/netdata
     env_PATH: "/opt/netdata/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
-    packages: &packages
-      - iproute
-      - nmap-ncat
-      - lm_sensors
-      - python
-      - python-dns
-      - python-ipaddress
+    packages: "{{ _os_defaults_vars.netdata_packages }}"
   package:
     stock_config_dir: /usr/lib64/netdata/conf.d
     user_config_dir: /etc/netdata
     env_PATH: "/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
     packages:
-      - *packages
+      - "{{ _os_defaults_vars.netdata_packages }}"
       - "netdata-{{ netdata_release }}"
 
 # Can be: /usr/lib64/netdata/conf.d or /opt/netdata/usr/lib/netdata/conf.d

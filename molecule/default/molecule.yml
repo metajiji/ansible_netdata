@@ -11,16 +11,16 @@ platforms:
     privileged: true
     capabilities:
       - SYS_ADMIN  # For systemd
-  # - name: molecule-netdata-el8-${CI_JOB_ID:-1}
-  #   image: centos:8
-  #   pull: true
-  #   volumes:
-  #     - "/sys/fs/cgroup:/sys/fs/cgroup:ro"
-  #   command: /usr/sbin/init
-  #   stop_signal: "SIGRTMIN+3"
-  #   privileged: true
-  #   capabilities:
-  #     - SYS_ADMIN  # For systemd
+  - name: molecule-netdata-el8-${CI_JOB_ID:-1}
+    image: centos:8
+    pull: true
+    volumes:
+      - "/sys/fs/cgroup:/sys/fs/cgroup:ro"
+    command: /usr/sbin/init
+    stop_signal: "SIGRTMIN+3"
+    privileged: true
+    capabilities:
+      - SYS_ADMIN  # For systemd
 provisioner:
   name: ansible
   log: true
