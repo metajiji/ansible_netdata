@@ -23,6 +23,10 @@ platforms:
       - SYS_ADMIN  # For systemd
 provisioner:
   name: ansible
+  inventory:
+    host_vars:
+      molecule-netdata-el8-${CI_JOB_ID:-1}:
+        ansible_python_interpreter: /usr/bin/python3
   log: true
   options:
     vvv: false

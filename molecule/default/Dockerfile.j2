@@ -13,7 +13,6 @@ RUN if [ $(command -v apt-get) ]; then apt-get update && apt-get install -y pyth
     elif [ $(command -v zypper) ]; then zypper refresh && zypper install -y python sudo bash python-xml iproute2 && zypper clean -a; \
     elif [ $(command -v apk) ]; then apk update && apk add --no-cache python sudo bash ca-certificates; \
     elif [ $(command -v xbps-install) ]; then xbps-install -Syu && xbps-install -y python sudo bash ca-certificates iproute2 && xbps-remove -O; fi
-RUN if [ ! -e /bin/python ] && [ ! -e /usr/bin/python ]; then ln -s /usr/bin/python3 /usr/bin/python; fi
 RUN if [ -f /usr/lib/systemd/systemd ]; then \
         (cd /lib/systemd/system/sysinit.target.wants/; \
           for i in *; do \
