@@ -49,7 +49,10 @@ verifier:
     verbose: true
 driver:
   name: docker
-lint:
-  name: yamllint
 dependency:
   name: galaxy
+lint: |
+  set -e
+  yamllint .
+  ansible-lint
+  flake8
