@@ -37,14 +37,8 @@ provisioner:
       callback_whitelist: profile_tasks
     diff:
       always: true
-  lint:
-    name: ansible-lint
-    options:
-      force-color: true
 verifier:
   name: testinfra
-  lint:
-    name: flake8
   options:
     verbose: true
 driver:
@@ -54,5 +48,5 @@ dependency:
 lint: |
   set -e
   yamllint .
-  ansible-lint
+  ansible-lint --force-color
   flake8
