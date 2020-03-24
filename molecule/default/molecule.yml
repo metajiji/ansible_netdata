@@ -3,22 +3,22 @@
 platforms:
   - name: molecule-netdata-el7-${CI_JOB_ID:-1}
     image: centos:7
-    pull: true
+    pull: false
     volumes:
       - "/sys/fs/cgroup:/sys/fs/cgroup:ro"
     command: /lib/systemd/systemd
     stop_signal: "SIGRTMIN+3"
-    privileged: true
+    privileged: false
     capabilities:
       - SYS_ADMIN  # For systemd
   - name: molecule-netdata-el8-${CI_JOB_ID:-1}
     image: centos:8
-    pull: true
+    pull: false
     volumes:
       - "/sys/fs/cgroup:/sys/fs/cgroup:ro"
     command: /lib/systemd/systemd
     stop_signal: "SIGRTMIN+3"
-    privileged: true
+    privileged: false
     capabilities:
       - SYS_ADMIN  # For systemd
 provisioner:
@@ -28,8 +28,6 @@ provisioner:
       molecule-netdata-el8-${CI_JOB_ID:-1}:
         ansible_python_interpreter: /usr/bin/python3
   log: true
-  options:
-    vvv: false
   config_options:
     defaults:
       stdout_callback: debug
