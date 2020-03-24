@@ -6,7 +6,7 @@ platforms:
     pull: true
     volumes:
       - "/sys/fs/cgroup:/sys/fs/cgroup:ro"
-    command: /usr/sbin/init
+    command: /lib/systemd/systemd
     stop_signal: "SIGRTMIN+3"
     privileged: true
     capabilities:
@@ -16,7 +16,7 @@ platforms:
     pull: true
     volumes:
       - "/sys/fs/cgroup:/sys/fs/cgroup:ro"
-    command: /usr/sbin/init
+    command: /lib/systemd/systemd
     stop_signal: "SIGRTMIN+3"
     privileged: true
     capabilities:

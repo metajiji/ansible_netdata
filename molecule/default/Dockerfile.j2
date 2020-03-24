@@ -13,7 +13,7 @@ RUN if [ $(command -v apt-get) ]; then apt-get update && apt-get install -y pyth
     elif [ $(command -v zypper) ]; then zypper refresh && zypper install -y python sudo bash python-xml iproute2 && zypper clean -a; \
     elif [ $(command -v apk) ]; then apk update && apk add --no-cache python sudo bash ca-certificates; \
     elif [ $(command -v xbps-install) ]; then xbps-install -Syu && xbps-install -y python sudo bash ca-certificates iproute2 && xbps-remove -O; fi
-RUN if [ -f /usr/lib/systemd/systemd ]; then \
+RUN if [ -f /lib/systemd/systemd ]; then \
         (cd /lib/systemd/system/sysinit.target.wants/; \
           for i in *; do \
             [ "$i" = systemd-tmpfiles-setup.service ] || rm -f "$i"; \
@@ -27,4 +27,4 @@ RUN if [ -f /usr/lib/systemd/systemd ]; then \
         rm -f /lib/systemd/system/anaconda.target.wants/*; \
     fi
 VOLUME ["/sys/fs/cgroup"]
-CMD ["/usr/sbin/init"]
+CMD ["/lib/systemd/systemd"]

@@ -23,6 +23,7 @@ _netdata_os_distributions:
     - "{{ ansible_distribution | lower }}-{{ ansible_distribution_major_version }}.yml"
     - "{{ ansible_distribution | lower }}.yml"
     - "{{ ansible_os_family | lower }}.yml"
+    - default.yml
 
 _os_defaults_vars: "{{ lookup('file', lookup('first_found', _netdata_os_distributions)) | from_yaml }}"
 
