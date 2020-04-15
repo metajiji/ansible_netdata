@@ -2,11 +2,11 @@
 
 # Can be tarball or package
 netdata_installation_type: tarball
-netdata_release: 1.20.0
+netdata_release: 1.21.1
 
 # https://github.com/netdata/netdata/blob/master/packaging/installer/kickstart-static64.sh
-# curl -sL https://github.com/netdata/netdata/releases/download/v1.19.0/sha256sums.txt | grep gz.run
-netdata_tarball_checksum: "sha256:5716693a670239a6665d07a07d01b9f224f4eafb7b444dde2cc2cbc56d206038"
+# curl -sL https://github.com/netdata/netdata/releases/download/v1.21.1/sha256sums.txt | grep gz.run
+netdata_tarball_checksum: "sha256:9753486a9719098cf327db6bd8f9cd164006df3b467a2557d6aaaf721d785dc6"
 netdata_tarball_release: "v{{ netdata_release }}"
 # yamllint disable-line rule:line-length
 netdata_tarball_url: "https://github.com/netdata/netdata/releases/download/{{ netdata_tarball_release }}/netdata-{{ netdata_tarball_release }}.gz.run"
