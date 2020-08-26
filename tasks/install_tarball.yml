@@ -7,6 +7,7 @@
     url: "{{ netdata_tarball_url }}"
     dest: "{{ playbook_dir }}/files/{{ netdata_tarball_url | basename }}"
     checksum: "{{ netdata_tarball_checksum }}"
+    mode: 0644
   delegate_to: localhost
 
 - name: Check that the netdata executable exists
@@ -28,6 +29,7 @@
       tempfile:
         state: file
         suffix: temp
+        mode: 0644
       register: netdata_tmp
 
     - name: Copy netdata-installer from ansible controller
@@ -35,6 +37,7 @@
       copy:
         src: "{{ playbook_dir }}/files/{{ netdata_tarball_url | basename }}"
         dest: "{{ netdata_tmp.path }}"
+        mode: 0644
 
     - name: Installing netdata
       command: sh "{{ netdata_tmp.path }}" --accept -- --dont-start-it
@@ -43,6 +46,7 @@
       copy:
         content: "{{ netdata_tarball_release }}"
         dest: /opt/netdata/INSTALLED.VERSION
+        mode: 0644
 
   always:
     - name: Remove temporary netdata file

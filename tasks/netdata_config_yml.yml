@@ -16,5 +16,6 @@
   copy:
     dest: "{{ netdata_user_config_dir }}/{{ configfile.path }}"
     content: "{{ yml_data | default({}, true) | combine(rendered_ymlfile_data, recursive=True) | to_nice_yaml }}"
+    mode: 0644
   vars:
     yml_data: "{{ yml_file_data.content | default('') | b64decode | from_yaml }}"

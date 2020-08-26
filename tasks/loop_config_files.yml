@@ -28,6 +28,7 @@
     src: "{{ netdata_stock_config_dir }}/{{ configfile.path }}"
     dest: "{{ netdata_user_config_dir }}/{{ configfile.path }}"
     remote_src: true
+    mode: 0644
   when: not user_configfile_stat.stat.exists and stock_configfile_stat.stat.exists
 
 - name: Processing file type {{ configfile.type }} for file {{ configfile.path }}
