@@ -29,7 +29,6 @@
       tempfile:
         state: file
         suffix: temp
-        mode: 0644
       register: netdata_tmp
 
     - name: Copy netdata-installer from ansible controller

@@ -16,7 +16,7 @@ For more info on the values, read `defaults/main.yml`
 | Variable   | Default | Comments (type)  |
 | :---       | :---    | :---             |
 | `netdata_installation_type` | `tarball` | `tarball` or `package` |
-| `netdata_release` | `1.24.0` | Type: string |
+| `netdata_release` | `1.25.0` | Type: string |
 | `netdata_tarball_checksum` | `sha256:xxx` | Type: string |
 | | | Is required for `tarball` installation type |
 | | | Can be obtained by command: `curl -sL https://github.com/netdata/netdata/releases/download/v1.22.1/sha256sums.txt \| grep gz.run` |
