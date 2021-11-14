@@ -1,51 +1,75 @@
 ---
 
-# Can be tarball or package
-netdata_installation_type: tarball
-netdata_release: 1.30.1
+# Can be tarball, package or docker
+netdata_installation_type: docker
+netdata_release: 1.31.0
 
 # https://github.com/netdata/netdata/blob/master/packaging/installer/kickstart-static64.sh
 # curl -sL https://github.com/netdata/netdata/releases/download/v1.30.1/sha256sums.txt | grep gz.run
-netdata_tarball_checksum: "sha256:1d2fe81655f9e3a7a807fec165b3a081176736d4165e919852924792d9f88df3"
+netdata_tarball_checksum: "sha256:e68b506834dc148ae3e1f60980cb68ef3fd5433afd12d43049625e9c78247676"
 netdata_tarball_release: "v{{ netdata_release }}"
 # yamllint disable-line rule:line-length
 netdata_tarball_url: "https://github.com/netdata/netdata/releases/download/{{ netdata_tarball_release }}/netdata-{{ netdata_tarball_release }}.gz.run"
 
+netdata_package_repo_enable: true
 # yamllint disable-line rule:line-length
 netdata_package_repo_file_url: "https://packagecloud.io/install/repositories/netdata/netdata/config_file.repo?os={{ ansible_distribution | lower }}&dist={{ ansible_distribution_major_version }}"
 netdata_package_repo_file_path: /etc/yum.repos.d/netdata_netdata.repo
+netdata_package_repo_name: netdata_netdata
+# https://wiki.centos.org/PackageManagement/Yum/Priorities
+# https://github.com/netdata/netdata/issues/11430
+netdata_package_repo_priority: "{{ netdata_distro_vars.netdata_package_repo_priority | default(False) }}"
 
-_netdata_os_distributions:
-  paths:
-    - "{{ role_path }}/defaults"
-  files:
-    - "{{ ansible_distribution | lower }}-{{ ansible_distribution_version }}.yml"
-    - "{{ ansible_distribution | lower }}-{{ ansible_distribution_major_version }}.yml"
-    - "{{ ansible_distribution | lower }}.yml"
-    - "{{ ansible_os_family | lower }}.yml"
-    - default.yml
+# Deal with right include defaults variables by distro
+# And yes now you can override defaults variables via group/host vars
+netdata_first_found_list:
+  - "{{ ansible_distribution | lower }}-{{ ansible_distribution_version }}.yml"
+  - "{{ ansible_distribution | lower }}-{{ ansible_distribution_major_version }}.yml"
+  - "{{ ansible_distribution | lower }}.yml"
+  - "{{ ansible_os_family | lower }}.yml"
+  - default.yml
 
-_os_defaults_vars: "{{ lookup('file', lookup('first_found', _netdata_os_distributions)) | from_yaml }}"
+netdata_docker_dir: /opt/netdata-docker
+netdata_docker_venv_dir: "{{ netdata_docker_dir }}/venv"
+netdata_docker_pip_venv_command: /usr/bin/python3 -m venv
+netdata_docker_venv_packages:
+  - docker
+  - docker-compose
+
+netdata_docker_service_name: netdata
+
+netdata_docker_registry_login: []
+#   - registry_url: "{{ lookup('env', 'CI_REGISTRY') }}"
+#     password: "{{ lookup('env', 'CI_REGISTRY_PASSWORD') }}"
+#     username: "{{ lookup('env', 'CI_REGISTRY_USER') }}"
+#     reauthorize: true
+
+netdata_docker_remove_orphans: false
+netdata_docker_wait_ready_delay: 2
+netdata_docker_wait_ready_retries: 60
+netdata_docker_force_recreate: false
 
 _netdata:
+  docker:
+    config_dir: "{{ netdata_docker_dir }}/volumes/netdata/etc/netdata"
+    netdata_config_web_files_owner: netdata
+    packages: "{{ netdata_distro_vars.netdata_docker_packages }}"
+    required_packages: "{{ netdata_distro_vars.netdata_docker_required_packages }}"
   tarball:
-    stock_config_dir: /opt/netdata/usr/lib/netdata/conf.d
-    user_config_dir: /opt/netdata/etc/netdata
-    env_PATH: "/opt/netdata/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
-    packages: "{{ _os_defaults_vars.netdata_packages }}"
+    config_dir: /opt/netdata/etc/netdata
+    netdata_config_web_files_owner: netdata
+    packages: "{{ netdata_distro_vars.netdata_packages }}"
+    required_packages: "{{ netdata_distro_vars.netdata_required_packages }}"
   package:
-    stock_config_dir: /usr/lib64/netdata/conf.d
-    user_config_dir: /etc/netdata
-    env_PATH: "/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+    config_dir: /etc/netdata
+    netdata_config_web_files_owner: root
     packages:
-      - "{{ _os_defaults_vars.netdata_packages }}"
+      - "{{ netdata_distro_vars.netdata_packages }}"
       - "netdata-{{ netdata_release }}"
-
-# Can be: /usr/lib64/netdata/conf.d or /opt/netdata/usr/lib/netdata/conf.d
-netdata_stock_config_dir: "{{ _netdata[netdata_installation_type]['stock_config_dir'] }}"
+    required_packages: "{{ netdata_distro_vars.netdata_required_packages }}"
 
 # Can be: /etc/netdata or /opt/netdata/etc/netdata
-netdata_user_config_dir: "{{ _netdata[netdata_installation_type]['user_config_dir'] }}"
+netdata_config_dir: "{{ _netdata[netdata_installation_type].config_dir }}"
 
 #
 # https://www.kernel.org/doc/Documentation/vm/ksm.txt
@@ -60,8 +84,7 @@ netdata_ksm_config:
   pages_to_scan: 100
 
 netdata_required_packages_extra: []
-netdata_required_packages:
-  - epel-release
+netdata_required_packages: "{{ _netdata[netdata_installation_type]['required_packages'] }}"
 
 netdata_packages_extra: []
 netdata_packages: "{{ _netdata[netdata_installation_type]['packages'] }}"
@@ -72,9 +95,8 @@ netdata_packages: "{{ _netdata[netdata_installation_type]['packages'] }}"
 #
 netdata_telemetry: false
 
-netdata_config_netdata_conf:
-  type: ini  # Can be ini or yml
-  path: netdata.conf  # Relative path
+netdata_config_ini_netdata_conf:
+  path: netdata.conf  # Relative path from netdata_config_dir
   data:
     registry:
       enabled: false
@@ -86,6 +108,8 @@ netdata_config_netdata_conf:
       # All DB engine instances, for localhost and all other streaming recipient nodes inherit their configuration
       dbengine disk space: 1024  # The amount of disk space in MiB that is dedicated to storing metric values
       page cache size: 128  # The amount of RAM in MiB that is dedicated to caching metric values
+      run as user: netdata
+      web files owner: "{{ _netdata[netdata_installation_type].netdata_config_web_files_owner }}"
     web:
       bind to: 127.0.0.1
       allow connections from: localhost '*'
@@ -97,23 +121,21 @@ netdata_config_netdata_conf:
     plugins:
       enable running new plugins: true
       check for new plugins every: 60
-      PATH environment variable: "{{ _netdata[netdata_installation_type]['env_PATH'] }}"
+      # PATH environment variable: "{{ _netdata[netdata_installation_type].env_PATH }}"
       # List of plugins enabled & configured https://docs.netdata.cloud/collectors/
       node.d: false
     plugin:proc:
       # Disable IPVS check since we doesn't use ipvs by default
-      /proc/net/ip_vs/stats: no
+      /proc/net/ip_vs/stats: "no"
 
-netdata_config_fping_conf:
-  type: ini
+netdata_config_ini_fping_conf:
   path: fping.conf  # Relative path
   data:
     null:
       hosts: 1.1.1.1
   no_extra_spaces: true
 
-netdata_config_go_d_conf:
-  type: yml
+netdata_config_yml_go_d_conf:
   path: go.d.conf  # Relative path
   data:
     modules:
@@ -133,8 +155,7 @@ netdata_config_go_d_conf:
       squidlog: true  # Also see python.d plugin
       web_log: true  # Also see python.d plugin
 
-netdata_config_python_d_conf:
-  type: yml
+netdata_config_yml_python_d_conf:
   path: python.d.conf  # Relative path
   data:
     enabled: true  # Enable / disable the whole python.d.plugin (all its modules)
@@ -212,8 +233,7 @@ netdata_config_python_d_conf:
     w1sensor: true
     web_log: false  # See go.d plugin instead
 
-netdata_config_python_d_chrony_conf:
-  type: yml
+netdata_config_yaml_python_d_chrony_conf:
   path: python.d/chrony.conf  # Relative path
   data:
     local:

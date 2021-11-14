@@ -8,17 +8,22 @@ FROM {{ item.image }}
 
 ENV container docker
 RUN if [ $(command -v apt-get) ]; then apt-get update && apt-get install -y python sudo bash ca-certificates iproute2 systemd && apt-get clean; \
-    elif [ $(command -v dnf) ]; then dnf makecache && dnf --assumeyes install python3 sudo python3-devel python*-dnf bash iproute && dnf clean all; \
-    elif [ $(command -v yum) ]; then yum makecache fast && yum install -y python sudo yum-plugin-ovl bash iproute && sed -i 's/plugins=0/plugins=1/g' /etc/yum.conf && yum clean all; \
+    elif [ $(command -v dnf) ]; then dnf makecache && dnf --assumeyes install python3 sudo python3-devel python*-dnf bash iproute systemd && dnf clean all; \
+    elif [ $(command -v yum) ]; then yum makecache fast && yum install -y python sudo yum-plugin-ovl bash iproute systemd && sed -i 's/plugins=0/plugins=1/g' /etc/yum.conf && yum clean all; \
     elif [ $(command -v zypper) ]; then zypper refresh && zypper install -y python sudo bash python-xml iproute2 && zypper clean -a; \
     elif [ $(command -v apk) ]; then apk update && apk add --no-cache python sudo bash ca-certificates; \
     elif [ $(command -v xbps-install) ]; then xbps-install -Syu && xbps-install -y python sudo bash ca-certificates iproute2 && xbps-remove -O; fi
 RUN if [ -f /lib/systemd/systemd ]; then \
         (cd /lib/systemd/system/sysinit.target.wants/; \
           for i in *; do \
-            [ "$i" = systemd-tmpfiles-setup.service ] || rm -f "$i"; \
+            [ "$i" = systemd-tmpfiles-setup.service ] && continue; \
+            rm -f "$i"; \
           done); \
-        rm -f /lib/systemd/system/multi-user.target.wants/*; \
+        (cd /usr/lib/systemd/system/multi-user.target.wants/; \
+          for i in *; do \
+            [ "$i" = systemd-user-sessions.service ] && continue; \
+            rm -f "$i"; \
+          done); \
         rm -f /etc/systemd/system/*.wants/*; \
         rm -f /lib/systemd/system/local-fs.target.wants/*; \
         rm -f /lib/systemd/system/sockets.target.wants/*udev*; \

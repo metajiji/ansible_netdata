@@ -13,28 +13,29 @@ This role use this bash script: `https://github.com/netdata/netdata/blob/master/
 
 For more info on the values, read `defaults/main.yml`
 
-| Variable   | Default | Comments (type)  |
-| :---       | :---    | :---             |
-| `netdata_installation_type` | `tarball` | `tarball` or `package` |
-| `netdata_release` | `1.30.1` | Type: string |
-| `netdata_tarball_checksum` | `sha256:xxx` | Type: string |
-| | | Is required for `tarball` installation type |
-| | | Can be obtained by command: `curl -sL https://github.com/netdata/netdata/releases/download/v1.30.1/sha256sums.txt \| grep gz.run` |
-| `netdata_stock_config_dir` | `/opt/netdata/usr/lib/netdata/conf.d` | For tarball: `/opt/netdata/usr/lib/netdata/conf.d` |
-| | | For package: `/usr/lib64/netdata/conf.d` |
-| `netdata_user_config_dir` | `/opt/netdata/etc/netdata` | For tarball: `/opt/netdata/etc/netdata` |
-| | | For package: `/etc/netdata`
-| `netdata_ksm_enabled` | `true` | Type: bool |
-| `netdata_required_packages_extra` | `[]` | Type: list |
-| `netdata_required_packages` | `epel-release` | Type: list |
-| `netdata_packages_extra` | `[]` | Type: list |
-| `netdata_packages` | `iproute` | Type: list |
-|                    | `nmap-ncat` | |
-|                    | `lm_sensors` | |
-|                    | `python` | |
-|                    | `python-dns` | |
-|                    | `python-ipaddress` | |
-| `netdata_telemetry` | `false` | Type: bool |
+| Variable                          | Default                                                              | Comments (type)                             |
+| :-------------------------------- | :------------------------------------------------------------------- | :------------------------------------------ |
+| `netdata_installation_type`       | `tarball`                                                            | One of `docker`, `tarball` or `package`     |
+| `netdata_release`                 | `1.30.1`                                                             | Type: string                                |
+| `netdata_tarball_checksum`        | `sha256:xxx`                                                         | Type: string                                |
+|                                   |                                                                      | Is required for `tarball` installation type |
+| `config_dir`                      | For tarball: `/opt/netdata/etc/netdata`                              |                                             |
+|                                   | For package: `/etc/netdata`                                          |                                             |
+|                                   | For docker: `"{{ netdata_docker_dir }}/volumes/netdata/etc/netdata"` |                                             |
+| `netdata_docker_dir`              | `/opt/netdata-docker`                                                | Directory for `docker-compose` files        |
+| `netdata_ksm_enabled`             | `true`                                                               | Type: bool                                  |
+| `netdata_required_packages_extra` | `[]`                                                                 | Type: list                                  |
+| `netdata_required_packages`       | `epel-release`                                                       | Type: list                                  |
+| `netdata_packages_extra`          | `[]`                                                                 | Type: list                                  |
+| `netdata_packages`                | `iproute`                                                            | Type: list                                  |
+|                                   | `nmap-ncat`                                                          |                                             |
+|                                   | `lm_sensors`                                                         |                                             |
+|                                   | `python`                                                             |                                             |
+|                                   | `python-dns`                                                         |                                             |
+|                                   | `python-ipaddress`                                                   |                                             |
+| `netdata_telemetry`               | `false`                                                              | Type: bool                                  |
+
+All `netdata_docker_*` variables only for `docker` installation type.
 
 ## Examples
 

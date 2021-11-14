@@ -1,0 +1,48 @@
+---
+
+- name: Deploy docker-compose.yml
+  diff: false
+  register: _containers
+  ignore_errors: "{{ ansible_check_mode }}"
+  docker_compose:
+    state: present
+    project_src: "{{ dc.project_src }}"
+    pull: "{{ dc.always_pull_images | default(False) }}"
+    recreate: "{{ (True in _tasks_status + [dc.force_recreate | bool]) | ternary('always', 'smart') }}"
+    remove_orphans: "{{ dc.remove_orphans }}"
+  vars:
+    _tasks_status: "{{ dc.changed_tasks | map(attribute='changed') | list }}"
+    ansible_python_interpreter: "{{ dc.ansible_python_interpreter }}"
+
+- name: Check container {{ item }} is ready on host {{ inventory_hostname }}
+  register: _docker_container
+  ignore_errors: "{{ ansible_check_mode }}"
+  docker_container_info:
+    name: "{{ item }}"
+  until:
+    (
+      (_container.State.Health.Status is not defined
+        and _container_type != 'init'
+        and _container.State.Status == 'running')
+      or
+      (_container.State.Health.Status is defined
+        and _container.State.Health.Status == 'healthy')
+    ) or (_container.State.Status == 'exited'
+          and _container_type == 'init'
+          and _container.State.ExitCode == 0)
+  retries: "{{ dc.wait_ready_retries }}"
+  delay: "{{ dc.wait_ready_delay }}"
+  loop: >-
+    {{
+      _containers.services.keys()
+      | map('extract', _containers.services)
+      | map('dict2items') | flatten
+      | map(attribute='key') | list
+    }}
+  loop_control:
+    label: |-
+      {{ item }} {{ _container.State.Status }} ({{ _container.State.ExitCode }}) {{ _container_type }}
+  vars:
+    _container: "{{ _docker_container.container }}"
+    _container_type: "{{ _container.Config.Labels['docker.container-type'] | default('default') }}"
+    ansible_python_interpreter: "{{ dc.ansible_python_interpreter }}"

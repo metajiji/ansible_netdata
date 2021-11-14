@@ -1,26 +1,62 @@
 ---
 
-- name: Download netdata.repo file
-  become: true
-  get_url:
-    url: "{{ netdata_package_repo_file_url }}"
-    dest: "{{ netdata_package_repo_file_path }}"
-    mode: 0644
-    owner: root
-    group: root
+- name: Install netdata repo
+  block:
+    - name: Check that the "{{ netdata_package_repo_file_path }}" exists
+      register: _repo_file
+      stat:
+        path: "{{ netdata_package_repo_file_path }}"
+        get_mime: false
+        get_checksum: false
+        get_attributes: false
 
-- name: Ensure "gpgcheck=1 is in section "[netdata_netdata]" in netdata.repo file
-  become: true
-  ini_file:
-    path: "{{ netdata_package_repo_file_path }}"
-    section: netdata_netdata
-    option: gpgcheck
-    value: 1
-    no_extra_spaces: true
+    - name: Download netdata.repo file
+      become: true
+      get_url:
+        url: "{{ netdata_package_repo_file_url }}"
+        dest: "{{ netdata_package_repo_file_path }}"
+        mode: 0644
+        owner: root
+        group: root
+      when:
+        - not _repo_file.stat.exists
 
-- name: Update yum cache
-  become: true
-  yum:
-    update_cache: true
-    disablerepo: '*'
-    enablerepo: netdata_netdata
+    - name: >-
+        Ensure "gpgcheck=1 is in section "{{ netdata_package_repo_name }}"
+        in "{{ netdata_package_repo_file_path }}" file
+      become: true
+      ini_file:
+        path: "{{ netdata_package_repo_file_path }}"
+        mode: 0644
+        section: "{{ netdata_package_repo_name }}"
+        option: gpgcheck
+        value: "0"
+        no_extra_spaces: true
+
+    - name: >-
+        Ensure priority is "{{ netdata_package_repo_priority }}"
+        in section "{{ netdata_package_repo_name }}"
+        in "{{ netdata_package_repo_file_path }}" file
+      become: true
+      ini_file:
+        path: "{{ netdata_package_repo_file_path }}"
+        mode: 0644
+        section: "{{ netdata_package_repo_name }}"
+        option: priority
+        value: "{{ netdata_package_repo_priority }}"
+        no_extra_spaces: true
+      when:
+        - netdata_package_repo_priority | bool
+        - netdata_installation_type == 'package'
+
+    - name: Update yum cache
+      become: true
+      yum:
+        update_cache: true
+        disablerepo: '*'
+        enablerepo: "{{ netdata_package_repo_name }}"
+  when:
+    - netdata_package_repo_enable
+
+- name: Install system packages
+  include_tasks: system_packages.yml

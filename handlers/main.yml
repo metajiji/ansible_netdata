@@ -1,10 +1,23 @@
 ---
 
-- name: restart netdata
+- name: restart netdata handler
   become: true
   service:
     name: netdata
     state: restarted
+  listen:
+    - restart netdata package
+    - restart netdata tarball
+
+- name: restart netdata docker
+  become: true
+  ignore_errors: "{{ ansible_check_mode }}"
+  shell: |-
+    test -f "{{ netdata_docker_venv_dir }}/bin/activate" \
+      && . "{{ netdata_docker_venv_dir }}/bin/activate"
+    docker-compose restart {{ netdata_docker_service_name }}
+  args:
+    chdir: "{{ netdata_docker_dir }}"
 
 - name: apply tmpfiles.d
   become: true

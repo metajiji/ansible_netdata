@@ -1,32 +1,54 @@
 ---
-
 platforms:
-  - name: molecule-netdata-el7-${CI_JOB_ID:-1}
+  - &platform-basic
+    name: molecule-netdata-package-el7-${CI_JOB_ID:-1}
     image: centos:7
-    pull: false
     volumes:
-      - "/sys/fs/cgroup:/sys/fs/cgroup:ro"
+      - /sys/fs/cgroup:/sys/fs/cgroup:ro
     command: /lib/systemd/systemd
-    stop_signal: "SIGRTMIN+3"
+    stop_signal: SIGRTMIN+3
     privileged: false
     capabilities:
       - SYS_ADMIN  # For systemd
-  - name: molecule-netdata-el8-${CI_JOB_ID:-1}
+    groups:
+      - netdata
+      - netdata_package
+  - <<: *platform-basic
+    name: molecule-netdata-package-el8-${CI_JOB_ID:-1}
     image: centos:8
-    pull: false
-    volumes:
-      - "/sys/fs/cgroup:/sys/fs/cgroup:ro"
-    command: /lib/systemd/systemd
-    stop_signal: "SIGRTMIN+3"
-    privileged: false
-    capabilities:
-      - SYS_ADMIN  # For systemd
+    groups:
+      - netdata
+      - netdata_package
+  - <<: *platform-basic
+    name: molecule-netdata-tarball-el7-${CI_JOB_ID:-1}
+    image: centos:7
+    groups:
+      - netdata
+      - netdata_tarball
+  - <<: *platform-basic
+    name: molecule-netdata-tarball-el8-${CI_JOB_ID:-1}
+    image: centos:8
+    groups:
+      - netdata
+      - netdata_tarball
+  - <<: *platform-basic
+    name: molecule-netdata-docker-el7-${CI_JOB_ID:-1}
+    image: centos:7
+    privileged: true  # For docker
+    groups:
+      - netdata
+      - docker
+      - netdata_docker
+  - <<: *platform-basic
+    name: molecule-netdata-docker-el8-${CI_JOB_ID:-1}
+    image: centos:8
+    privileged: true  # For docker
+    groups:
+      - netdata
+      - docker
+      - netdata_docker
 provisioner:
   name: ansible
-  inventory:
-    host_vars:
-      molecule-netdata-el8-${CI_JOB_ID:-1}:
-        ansible_python_interpreter: /usr/bin/python3
   log: true
   config_options:
     defaults:
@@ -36,9 +58,7 @@ provisioner:
     diff:
       always: true
 verifier:
-  name: testinfra
-  options:
-    verbose: true
+  name: ansible
 driver:
   name: docker
 dependency:
@@ -46,5 +66,4 @@ dependency:
 lint: |
   set -e
   yamllint .
-  ansible-lint --force-color
-  flake8
+  ansible-lint --force-color -p .

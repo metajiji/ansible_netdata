@@ -1,4 +1,10 @@
 ---
+
+netdata_package_repo_priority: 1
+
+netdata_required_packages:
+  - epel-release
+
 netdata_packages:
   - iproute
   - nmap-ncat
@@ -6,3 +12,9 @@ netdata_packages:
   - python
   - python-dns
   - python-ipaddress
+
+netdata_docker_required_packages: []
+
+netdata_docker_packages:
+  - python3  # For venv
+  - python-setuptools
