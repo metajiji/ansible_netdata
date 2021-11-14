@@ -1,0 +1,42 @@
+---
+
+- name: Login to docker registries and pull images via docker-compose
+  block:
+    - name: Login to registries
+      docker_login:
+        password: "{{ item.password }}"  # noqa no-log-password
+        registry_url: "{{ item.registry_url }}"
+        state: present
+        username: "{{ item.username }}"
+      when:
+        - item.registry_url | length > 0
+      vars:
+        ansible_python_interpreter: "{{ dc.ansible_python_interpreter }}"
+      loop: "{{ dc.docker_registries }}"
+      loop_control:
+        label: "{{ item.username }}@{{ item.registry_url }}"
+
+    - name: Pull images via docker-compose
+      become: true
+      changed_when: false
+      ignore_errors: "{{ ansible_check_mode }}"
+      shell: |-
+        test -f "{{ dc.venv_dir }}/bin/activate" \
+          && . "{{ dc.venv_dir }}/bin/activate"
+        docker-compose pull
+      args:
+        chdir: "{{ dc.project_src }}"
+  always:
+    - name: Logout from registries
+      docker_login:
+        password: "{{ item.password }}"  # noqa no-log-password
+        registry_url: "{{ item.registry_url }}"
+        state: absent
+        username: "{{ item.username }}"
+      loop: "{{ dc.docker_registries }}"
+      loop_control:
+        label: "{{ item.username }}@{{ item.registry_url }}"
+      when:
+        - item.registry_url | length > 0
+      vars:
+        ansible_python_interpreter: "{{ dc.ansible_python_interpreter }}"

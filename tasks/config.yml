@@ -1,4 +1,40 @@
 ---
+
+- name: Ensure netdata config directory is exists
+  become: true
+  file:
+    path: "{{ item }}"
+    state: directory
+    mode: 0755
+  loop: >-
+    {{
+      [netdata_config_dir] | product(_config_files_list)
+      | map('join', '/')
+      | map('dirname')
+      | unique | list
+    }}
+  vars:
+    _var_names_list: "{{ lookup('varnames', '^netdata_config_(ya?ml|ini)', wantlist=True) }}"
+    _config_files_list: "{{ lookup('vars', *_var_names_list, wantlist=True) | map(attribute='path') | list }}"
+
+- name: Disable telemetry (send anonymous statistic)
+  become: true
+  file:
+    path: "{{ netdata_config_dir }}/.opt-out-from-anonymous-statistics"
+    state: touch
+    mode: 0644
+    modification_time: preserve
+    access_time: preserve
+  when: not netdata_telemetry | bool
+
+- name: Check that the /etc/tmpfiles.d/ksm.conf exists
+  register: _tmpfiles_d_ksm
+  stat:
+    path: /etc/tmpfiles.d/ksm.conf
+    get_mime: false
+    get_checksum: false
+    get_attributes: false
+
 - name: Enable KSM in kernel
   become: true
   template:
@@ -8,19 +44,48 @@
     group: root
     mode: 0644
   notify: apply tmpfiles.d
+  when:  # Disable only if file is exists or KSM is enabled in config
+    - netdata_ksm_enabled | bool
+    - _tmpfiles_d_ksm.stat.exists
 
-- name: Set variables for "netdata_config_*" variables
-  include_tasks: loop_config_files.yml
-  loop_control:
-    loop_var: configfile
-  loop: "{{ vars | select('match', 'netdata_config_') | map('extract', vars) | list }}"
-
-- name: Disable telemetry (send anonymous statistic)
+- name: Set variables for "netdata_config_ini_*" variables
   become: true
-  file:
-    path: "{{ netdata_user_config_dir }}/.opt-out-from-anonymous-statistics"
-    state: touch
+  notify: "restart netdata {{ netdata_installation_type }}"
+  register: _changed_tasks_netdata_config_ini
+  copy:
     mode: 0644
-    modification_time: preserve
-    access_time: preserve
-  when: not netdata_telemetry | bool
+    dest: "{{ configfile_path }}"
+    content: |-
+      {{ lookup('config', 'DEFAULT_MANAGED_STR', on_missing='skip') | comment(decoration='#') }}
+      {% for section in configfile.data.keys() | sort %}
+      {% if section %}
+
+      [{{ section }}]
+      {% endif %}
+      {% for option in configfile.data[section].keys() | sort %}
+      {{ option }}={{ configfile.data[section][option] }}
+      {% endfor %}
+      {% endfor %}
+  loop: "{{ lookup('varnames', '^netdata_config_ini_', wantlist=True) }}"
+  loop_control:
+    label: "{{ configfile_path }}"
+  vars:
+    configfile: "{{ lookup('vars', item) }}"
+    configfile_path: "{{ netdata_config_dir }}/{{ configfile.path }}"
+
+- name: Set variables for "netdata_config_yml_*" variables
+  become: true
+  notify: "restart netdata {{ netdata_installation_type }}"
+  register: _changed_tasks_netdata_config_yml
+  copy:
+    mode: 0644
+    dest: "{{ configfile_path }}"
+    content: |-
+      {{ lookup('config', 'DEFAULT_MANAGED_STR', on_missing='skip') | comment(decoration='#') }}
+      {{ configfile.data | to_nice_yaml }}
+  loop: "{{ lookup('varnames', '^netdata_config_ya?ml_', wantlist=True) }}"
+  loop_control:
+    label: "{{ configfile_path }}"
+  vars:
+    configfile: "{{ lookup('vars', item) }}"
+    configfile_path: "{{ netdata_config_dir }}/{{ configfile.path }}"

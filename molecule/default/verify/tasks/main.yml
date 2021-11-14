@@ -1,0 +1,13 @@
+---
+
+- name: Verify netdata is healthy
+  uri:
+    url: http://127.0.0.1:19999/
+    method: GET
+    validate_certs: false
+    use_proxy: false
+    status_code:
+      - 200
+
+- name: Include tasks for {{ netdata_installation_type }}
+  include: "{{ netdata_installation_type }}.yml"

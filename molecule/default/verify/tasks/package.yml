@@ -1,0 +1,15 @@
+---
+
+- name: Ensure netdata service is started and enabled at boot
+  become: true
+  check_mode: true
+  register: _netdata_service
+  service:
+    name: netdata
+    state: started
+    enabled: true
+
+- name: netdata - service is started and enabled
+  assert:
+    that:
+      - not _netdata_service.changed

@@ -1,0 +1,8 @@
+---
+
+- name: Verify
+  hosts: all
+  tasks:
+    - name: Include verify role
+      include_role:
+        name: verify

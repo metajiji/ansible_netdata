@@ -1,20 +1,22 @@
 ---
-- name: Include install tasks
-  include: install.yml
-  tags:
-    - install
-
 - name: Include config tasks
   include: config.yml
   tags:
     - configure
+
+- name: "Include {{ netdata_installation_type }} tasks"
+  include: "install_{{ netdata_installation_type }}.yml"
+  tags:
+    - install
 
 - name: Ensure netdata service is started and enabled at boot
   become: true
   service:
     name: netdata
     state: started
-    enabled: yes
+    enabled: true
   tags:
     - configure
     - install
+  when:
+    - netdata_installation_type in ['package', 'tarball']

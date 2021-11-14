@@ -1,0 +1,78 @@
+---
+
+- name: Install system packages
+  include_tasks: system_packages.yml
+
+- name: Install virtualenv packages
+  become: true
+  ignore_errors: "{{ ansible_check_mode }}"
+  pip:
+    virtualenv: "{{ netdata_docker_venv_dir }}"
+    name: "{{ netdata_docker_venv_packages }}"
+    virtualenv_command: "{{ netdata_docker_pip_venv_command }}"
+  tags:
+    - install
+    - pip
+
+- name: Execute systemd-detect-virt  # noqa 301
+  become: true
+  changed_when: false
+  register: _virtualization
+  failed_when: _virtualization.stdout | length == 0
+  command: systemd-detect-virt --vm
+
+- name: Get all host groups information
+  ansible.builtin.getent:
+    database: group
+    key: docker
+
+- name: Render docker-compose.yml file
+  become: true
+  ignore_errors: "{{ ansible_check_mode }}"
+  template:
+    src: docker-compose.yml.j2
+    dest: "{{ netdata_docker_dir }}/docker-compose.yml"
+    owner: root
+    group: root
+    mode: 0644
+  vars:
+    netdata_docker_gid: "{{ getent_group.docker.1 }}"
+    netdata_docker_virtualization: "{{ _virtualization.stdout }}"
+  tags:
+    - config
+    - docker-compose
+    - docker-compose-file
+
+- name: Pull docker images via docker-compose
+  include_tasks:
+    file: docker_compose-pull.yml
+  vars:
+    dc:
+      ansible_python_interpreter: "{{ netdata_docker_venv_dir }}/bin/python"
+      docker_registries: "{{ netdata_docker_registry_login }}"
+      project_src: "{{ netdata_docker_dir }}"
+      venv_dir: "{{ netdata_docker_venv_dir }}"
+  tags: &docker_compose-pull
+    - docker-compose
+    - docker-compose-pull
+  args:
+    apply:
+      tags: *docker_compose-pull
+
+- name: Include docker_compose tasks
+  include_tasks:
+    file: docker_compose-deploy.yml
+  vars:
+    dc:
+      ansible_python_interpreter: "{{ netdata_docker_venv_dir }}/bin/python"
+      changed_tasks: "{{ vars | select('match', '^_changed_tasks_') | map('extract', vars) | list }}"
+      force_recreate: "{{ netdata_docker_force_recreate }}"
+      project_src: "{{ netdata_docker_dir }}"
+      remove_orphans: "{{ netdata_docker_remove_orphans }}"
+      wait_ready_delay: "{{ netdata_docker_wait_ready_delay }}"
+      wait_ready_retries: "{{ netdata_docker_wait_ready_retries }}"
+  tags: &docker_compose-deploy
+    - docker-compose
+  args:
+    apply:
+      tags: *docker_compose-deploy

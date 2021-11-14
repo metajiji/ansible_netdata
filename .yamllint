@@ -1,4 +1,6 @@
-extends: relaxed
+---
+
+extends: default
 
 ignore: |
   venv/

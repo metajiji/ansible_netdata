@@ -1,4 +1,6 @@
 ---
+- name: Install system packages
+  include_tasks: system_packages.yml
 
 - name: Download netdata with check (sha256)
   become: false

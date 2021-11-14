@@ -1,0 +1,44 @@
+{{ ansible_managed | comment(decoration="#") }}
+---
+version: '3.9'
+
+x-container: &container
+  restart: always
+  logging:
+    driver: json-file
+    options:
+      max-size: "1m"
+      max-file: "10"
+
+services:
+  {{ netdata_docker_service_name }}:
+    <<: *container
+    image: ${NETDATA_IMAGE:-netdata/netdata}:${NETDATA_VERSION:-v1.31.0}
+    hostname: ${NETDATA_HOSTNAME:-{{ ansible_fqdn }}}  # set to fqdn of host
+    restart: always
+    cap_add:
+      - SYS_PTRACE
+    security_opt:
+      - apparmor:unconfined
+    network_mode: host  # TODO: Do it optionally, traefik via labels
+    expose:
+      - 19999
+    environment:
+      VIRTUALIZATION: ${VIRTUALIZATION:-{{ netdata_docker_virtualization }}}  # VIRTUALIZATION=$(systemd-detect-virt -v) docker-compose up
+      DO_NOT_TRACK: 1
+      PGID: {{ netdata_docker_gid }}
+    volumes:
+      - ./volumes/netdata/etc/netdata:/etc/netdata
+      - /etc/group:/host/etc/group:ro
+      - /etc/os-release:/host/etc/os-release:ro  # it can be /etc/lsb-release and dependig on you linux distro
+      - /etc/passwd:/host/etc/passwd:ro
+      # - /etc/pki/ca-trust/extracted/pem/tls-ca-bundle.pem:/etc/pki/ca-trust/extracted/pem/tls-ca-bundle.pem
+      - /proc:/host/proc:ro
+      - /sys:/host/sys:ro
+      - netdata_cache:/var/cache/netdata
+      - netdata_log:/var/log/netdata
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+
+volumes:
+  netdata_log:
+  netdata_cache:

@@ -1,0 +1,26 @@
+---
+- name: Install required packages
+  become: true
+  ignore_errors: "{{ ansible_check_mode }}"
+  yum:
+    name: >-
+      {{
+        netdata_required_packages
+        + netdata_required_packages_extra
+        + _extra_required_packages
+        | unique
+      }}
+    state: present
+  vars:
+    _extra_required_packages: >-
+      {{
+        (netdata_package_repo_priority | bool and netdata_installation_type == 'package')
+        | ternary(['yum-priorities'], [])
+      }}
+
+- name: Install netdata packages
+  become: true
+  ignore_errors: "{{ ansible_check_mode }}"
+  yum:
+    name: "{{ netdata_packages | union(netdata_packages_extra) | flatten }}"
+    state: present

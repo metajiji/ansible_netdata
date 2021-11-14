@@ -3,6 +3,6 @@
 # Manually exec tmpfiles rules:
 # sudo systemd-tmpfiles --create
 
-{% for parameter, value in netdata_ksm_config.items() %}
-w {{ netdata_ksm_sys_path | regex_replace('\\/$', '') }}/{{ parameter }} - - - - {{ value }}
+{% for parameter in netdata_ksm_config.keys() | sort %}
+w {{ netdata_ksm_sys_path | regex_replace('\\/$', '') }}/{{ parameter }} - - - - {{ netdata_ksm_config[parameter] }}
 {% endfor %}

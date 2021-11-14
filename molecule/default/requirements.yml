@@ -1,0 +1,7 @@
+---
+
+roles:
+  - src: https://github.com/metajiji/ansible_docker.git
+    scm: git
+    version: 3.0.4
+    name: docker
