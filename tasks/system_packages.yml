@@ -11,6 +11,7 @@
         | unique
       }}
     state: present
+    disable_gpg_check: true
   vars:
     _extra_required_packages: >-
       {{
