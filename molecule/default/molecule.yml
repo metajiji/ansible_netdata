@@ -5,20 +5,32 @@ platforms:
     image: centos:7
     volumes:
       - /sys/fs/cgroup:/sys/fs/cgroup:ro
+      - /var
+    tmpfs:
+      - /tmp
+      - /run
+    keep_volumes: false
+    tty: true  # For show system logs in docker logs
     command: /lib/systemd/systemd
     stop_signal: SIGRTMIN+3
-    privileged: false
+    privileged: true
+    security_opts:
+      - apparmor=unconfined
+      - seccomp=unconfined
     capabilities:
       - SYS_ADMIN  # For systemd
+      - NET_ADMIN  # For dockerd
+      - SYS_RESOURCE  # For dockerd oom_score_adj
     groups:
       - netdata
       - netdata_package
-  - <<: *platform-basic
-    name: molecule-netdata-package-el8-${CI_JOB_ID:-1}
-    image: centos:8
-    groups:
-      - netdata
-      - netdata_package
+  # Disabled because netdata package not supplied for el9
+  # - <<: *platform-basic
+  #   name: molecule-netdata-package-el9-${CI_JOB_ID:-1}
+  #   image: quay.io/centos/centos:stream9
+  #   groups:
+  #     - netdata
+  #     - netdata_package
   - <<: *platform-basic
     name: molecule-netdata-tarball-el7-${CI_JOB_ID:-1}
     image: centos:7
@@ -26,8 +38,8 @@ platforms:
       - netdata
       - netdata_tarball
   - <<: *platform-basic
-    name: molecule-netdata-tarball-el8-${CI_JOB_ID:-1}
-    image: centos:8
+    name: molecule-netdata-tarball-el9-${CI_JOB_ID:-1}
+    image: quay.io/centos/centos:stream9
     groups:
       - netdata
       - netdata_tarball
@@ -40,8 +52,8 @@ platforms:
       - docker
       - netdata_docker
   - <<: *platform-basic
-    name: molecule-netdata-docker-el8-${CI_JOB_ID:-1}
-    image: centos:8
+    name: molecule-netdata-docker-el9-${CI_JOB_ID:-1}
+    image: quay.io/centos/centos:stream9
     privileged: true  # For docker
     groups:
       - netdata

@@ -1,0 +1,18 @@
+---
+
+netdata_package_repo_priority: 1
+
+netdata_required_packages:
+  - https://dl.fedoraproject.org/pub/epel/epel-release-latest-9.noarch.rpm
+
+netdata_packages:
+  - iproute
+  - nmap-ncat
+  - lm_sensors
+  - python3-dns
+
+netdata_docker_required_packages: []
+
+netdata_docker_packages:
+  - python3  # For venv
+  - python-setuptools
