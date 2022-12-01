@@ -6,13 +6,10 @@ FROM {{ item.registry.url }}/{{ item.image }}
 FROM {{ item.image }}
 {% endif %}
 
-ENV container docker
-RUN if [ $(command -v apt-get) ]; then apt-get update && apt-get install -y python sudo bash ca-certificates iproute2 systemd && apt-get clean; \
-    elif [ $(command -v dnf) ]; then dnf makecache && dnf --assumeyes install sudo python3-devel python*-dnf bash iproute systemd && dnf clean all; \
-    elif [ $(command -v yum) ]; then yum makecache fast && yum install -y python sudo yum-plugin-ovl bash iproute systemd && sed -i 's/plugins=0/plugins=1/g' /etc/yum.conf && yum clean all; \
-    elif [ $(command -v zypper) ]; then zypper refresh && zypper install -y python sudo bash python-xml iproute2 && zypper clean -a; \
-    elif [ $(command -v apk) ]; then apk update && apk add --no-cache python sudo bash ca-certificates; \
-    elif [ $(command -v xbps-install) ]; then xbps-install -Syu && xbps-install -y python sudo bash ca-certificates iproute2 && xbps-remove -O; fi
+ENV container=docker
+RUN if [ $(command -v apt-get) ]; then apt-get update && apt-get install -y python3 sudo bash ca-certificates iproute2 systemd && apt-get clean; \
+    elif [ $(command -v dnf) ]; then dnf makecache && dnf -y install python3 sudo bash iproute systemd && dnf clean all; \
+    elif [ $(command -v yum) ]; then yum makecache fast && yum install -y python sudo yum-plugin-ovl bash iproute systemd && sed -i 's/plugins=0/plugins=1/g' /etc/yum.conf && yum clean all; fi
 RUN if [ -f /lib/systemd/systemd ]; then \
         (cd /lib/systemd/system/sysinit.target.wants/; \
           for i in *; do \
@@ -31,5 +28,5 @@ RUN if [ -f /lib/systemd/systemd ]; then \
         rm -f /lib/systemd/system/basic.target.wants/*; \
         rm -f /lib/systemd/system/anaconda.target.wants/*; \
     fi
-VOLUME ["/sys/fs/cgroup"]
+
 CMD ["/lib/systemd/systemd"]

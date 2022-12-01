@@ -4,39 +4,28 @@ platforms:
     name: molecule-netdata-package-el7-${CI_JOB_ID:-1}
     image: centos:7
     volumes:
-      - /sys/fs/cgroup:/sys/fs/cgroup:ro
-      - /var
-    tmpfs:
-      - /tmp
-      - /run
+      - /var/lib
+      - /lib/modules:/lib/modules:ro
     keep_volumes: false
-    tty: true  # For show system logs in docker logs
+    tty: true
+    tmpfs:
+      - /run
     command: /lib/systemd/systemd
     stop_signal: SIGRTMIN+3
-    privileged: true
-    security_opts:
-      - apparmor=unconfined
-      - seccomp=unconfined
+    privileged: true  # For dockerd
     capabilities:
       - SYS_ADMIN  # For systemd
       - NET_ADMIN  # For dockerd
+      - SYS_MODULE  # For dockerd and modprobe
       - SYS_RESOURCE  # For dockerd oom_score_adj
+    security_opts:
+      - apparmor=unconfined
+      - seccomp=unconfined
     groups:
       - netdata
       - netdata_package
-  # Disabled because netdata package not supplied for el9
-  # - <<: *platform-basic
-  #   name: molecule-netdata-package-el9-${CI_JOB_ID:-1}
-  #   image: quay.io/centos/centos:stream9
-  #   groups:
-  #     - netdata
-  #     - netdata_package
-  - <<: *platform-basic
-    name: molecule-netdata-tarball-el7-${CI_JOB_ID:-1}
-    image: centos:7
-    groups:
-      - netdata
-      - netdata_tarball
+  # netdata package not supplied for el9
+  # netdata tarball not supported outdated systemd from el7
   - <<: *platform-basic
     name: molecule-netdata-tarball-el9-${CI_JOB_ID:-1}
     image: quay.io/centos/centos:stream9
@@ -46,7 +35,6 @@ platforms:
   - <<: *platform-basic
     name: molecule-netdata-docker-el7-${CI_JOB_ID:-1}
     image: centos:7
-    privileged: true  # For docker
     groups:
       - netdata
       - docker
@@ -54,7 +42,6 @@ platforms:
   - <<: *platform-basic
     name: molecule-netdata-docker-el9-${CI_JOB_ID:-1}
     image: quay.io/centos/centos:stream9
-    privileged: true  # For docker
     groups:
       - netdata
       - docker
@@ -78,4 +65,4 @@ dependency:
 lint: |
   set -e
   yamllint .
-  ansible-lint --force-color -p .
+  ansible-lint --force-color .
