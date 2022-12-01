@@ -27,6 +27,8 @@ services:
       VIRTUALIZATION: ${VIRTUALIZATION:-{{ netdata_docker_virtualization }}}  # VIRTUALIZATION=$(systemd-detect-virt -v) docker-compose up
       DO_NOT_TRACK: 1
       PGID: {{ netdata_docker_gid }}
+    healthcheck:
+      test: netdatacli ping
     volumes:
       - ./volumes/netdata/etc/netdata:/etc/netdata
       - /etc/group:/host/etc/group:ro
