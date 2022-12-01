@@ -1,6 +1,10 @@
 ---
 
 - name: Verify netdata is healthy
+  register: _netdata_uri
+  until: _netdata_uri is succeeded
+  retries: 15
+  delay: 1
   uri:
     url: http://127.0.0.1:19999/
     method: GET
