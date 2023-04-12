@@ -19,6 +19,8 @@
     docker-compose restart {{ netdata_docker_service_name }}
   args:
     chdir: "{{ netdata_docker_dir }}"
+  listen:
+    - restart netdata docker
 
 - name: Apply tmpfiles.d
   become: true
