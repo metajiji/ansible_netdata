@@ -1,17 +1,17 @@
 ---
 platforms:
   - &platform-basic
-    name: molecule-netdata-package-el7-${CI_JOB_ID:-1}
-    image: centos:7
-    volumes:
-      - /var/lib
-      - /lib/modules:/lib/modules:ro
-    keep_volumes: false
-    tty: true
-    tmpfs:
-      - /run
+    name: molecule-netdata-package-fc37-${CI_JOB_ID:-1}
+    image: fedora:37
     command: /lib/systemd/systemd
     stop_signal: SIGRTMIN+3
+    tty: true  # For journald and capture stdout/sdterr via docker
+    tmpfs:
+      - /run
+    keep_volumes: false
+    volumes:
+      - /var/lib/docker
+      - /lib/modules:/lib/modules:ro
     privileged: true  # For dockerd
     capabilities:
       - SYS_ADMIN  # For systemd
@@ -33,19 +33,13 @@ platforms:
       - netdata
       - netdata_tarball
   - <<: *platform-basic
-    name: molecule-netdata-docker-el7-${CI_JOB_ID:-1}
-    image: centos:7
-    groups:
-      - netdata
-      - docker
-      - netdata_docker
-  - <<: *platform-basic
     name: molecule-netdata-docker-el9-${CI_JOB_ID:-1}
     image: quay.io/centos/centos:stream9
     groups:
       - netdata
       - docker
       - netdata_docker
+
 provisioner:
   name: ansible
   log: true
@@ -53,15 +47,21 @@ provisioner:
     defaults:
       stdout_callback: debug
       error_on_undefined_vars: true
-      callback_whitelist: profile_tasks
+      callbacks_enabled: profile_roles,profile_tasks,timer
+      collections_paths: ./collections
+      roles_paths: ./roles
     diff:
       always: true
+
 verifier:
   name: ansible
-driver:
-  name: docker
+
 dependency:
   name: galaxy
+
+driver:
+  name: docker
+
 lint: |
   set -e
   yamllint .
