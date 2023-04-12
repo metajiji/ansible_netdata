@@ -4,12 +4,15 @@ galaxy_info:
   namespace: den4k
   author: Denis Kadyshev
   description: Install/Configure netdata
-  min_ansible_version: 2.7
+  min_ansible_version: "2.7"
   license: WTFPL
   platforms:
-    - name: Centos
+    - name: EL
       versions:
-        - All
+        - "7"
+    - name: Fedora
+      versions:
+        - "37"
   galaxy_tags:
     - monitoring
     - netdata

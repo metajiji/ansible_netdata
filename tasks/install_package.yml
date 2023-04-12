@@ -1,6 +1,8 @@
 ---
 
 - name: Install netdata repo
+  when:
+    - netdata_package_repo_enable
   block:
     - name: Check that the "{{ netdata_package_repo_file_path }}" exists
       register: _repo_file
@@ -55,8 +57,6 @@
         update_cache: true
         disablerepo: '*'
         enablerepo: "{{ netdata_package_repo_name }}"
-  when:
-    - netdata_package_repo_enable
 
 - name: Install system packages
   ansible.builtin.include_tasks: system_packages.yml

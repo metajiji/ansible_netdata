@@ -26,8 +26,10 @@
 
 - name: Download and install netdata
   become: true
+  when: not netdata_installed_version.stat.exists
+        or ((netdata_installed_version_string.content | default('') | b64decode) != netdata_tarball_release)
   block:
-    - name: create temporary file
+    - name: Create temporary file
       ansible.builtin.tempfile:
         state: file
         suffix: temp
@@ -41,6 +43,7 @@
         mode: 0644
 
     - name: Installing netdata
+      changed_when: false
       ansible.builtin.command: sh "{{ netdata_tmp.path }}" --accept -- --dont-start-it
 
     - name: Save /opt/netdata/INSTALLED.VERSION file
@@ -54,5 +57,3 @@
       ansible.builtin.file:
         path: "{{ netdata_tmp.path }}"
         state: absent
-  when: not netdata_installed_version.stat.exists
-        or ((netdata_installed_version_string.content | default('') | b64decode) != netdata_tarball_release)

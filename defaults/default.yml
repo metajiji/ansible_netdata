@@ -13,4 +13,4 @@ netdata_docker_required_packages: []
 
 netdata_docker_packages:
   - python3  # For venv
-  - "{{ 'python{v}-setuptools'.format(v={2:'',3:'3'}[ansible_python.version.major]) }}"
+  - "{{ 'python{v}-setuptools'.format(v={2: '', 3: '3'}[ansible_python.version.major]) }}"
