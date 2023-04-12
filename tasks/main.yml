@@ -1,17 +1,17 @@
 ---
 - name: Include config tasks
-  include: config.yml
+  ansible.builtin.include_tasks: config.yml
   tags:
     - configure
 
 - name: "Include {{ netdata_installation_type }} tasks"
-  include: "install_{{ netdata_installation_type }}.yml"
+  ansible.builtin.include_tasks: "install_{{ netdata_installation_type }}.yml"
   tags:
     - install
 
 - name: Ensure netdata service is started and enabled at boot
   become: true
-  service:
+  ansible.builtin.service:
     name: netdata
     state: started
     enabled: true

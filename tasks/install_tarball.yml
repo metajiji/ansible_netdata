@@ -1,11 +1,11 @@
 ---
 - name: Install system packages
-  include_tasks: system_packages.yml
+  ansible.builtin.include_tasks: system_packages.yml
 
 - name: Download netdata with check (sha256)
   become: false
   run_once: true
-  get_url:
+  ansible.builtin.get_url:
     url: "{{ netdata_tarball_url }}"
     dest: "{{ playbook_dir }}/files/{{ netdata_tarball_url | basename }}"
     checksum: "{{ netdata_tarball_checksum }}"
@@ -14,12 +14,12 @@
 
 - name: Check that the netdata executable exists
   become: true
-  stat:
+  ansible.builtin.stat:
     path: /opt/netdata/INSTALLED.VERSION
   register: netdata_installed_version
 
 - name: Read /opt/netdata/INSTALLED.VERSION file
-  slurp:
+  ansible.builtin.slurp:
     src: /opt/netdata/INSTALLED.VERSION
   register: netdata_installed_version_string
   when: netdata_installed_version.stat.exists
@@ -28,30 +28,30 @@
   become: true
   block:
     - name: create temporary file
-      tempfile:
+      ansible.builtin.tempfile:
         state: file
         suffix: temp
       register: netdata_tmp
 
     - name: Copy netdata-installer from ansible controller
       no_log: true
-      copy:
+      ansible.builtin.copy:
         src: "{{ playbook_dir }}/files/{{ netdata_tarball_url | basename }}"
         dest: "{{ netdata_tmp.path }}"
         mode: 0644
 
     - name: Installing netdata
-      command: sh "{{ netdata_tmp.path }}" --accept -- --dont-start-it
+      ansible.builtin.command: sh "{{ netdata_tmp.path }}" --accept -- --dont-start-it
 
     - name: Save /opt/netdata/INSTALLED.VERSION file
-      copy:
+      ansible.builtin.copy:
         content: "{{ netdata_tarball_release }}"
         dest: /opt/netdata/INSTALLED.VERSION
         mode: 0644
 
   always:
     - name: Remove temporary netdata file
-      file:
+      ansible.builtin.file:
         path: "{{ netdata_tmp.path }}"
         state: absent
   when: not netdata_installed_version.stat.exists

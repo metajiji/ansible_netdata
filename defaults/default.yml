@@ -1,7 +1,6 @@
 ---
 
-netdata_required_packages:
-  - epel-release
+netdata_required_packages: []
 
 netdata_packages:
   - iproute

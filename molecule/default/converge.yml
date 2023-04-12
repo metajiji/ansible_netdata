@@ -3,4 +3,6 @@
 - name: Converge
   hosts: all
   roles:
-    - netdata
+    - role: netdata
+      tags:
+        - netdata

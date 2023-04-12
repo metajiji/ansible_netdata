@@ -2,7 +2,7 @@
 
 - name: restart netdata handler
   become: true
-  service:
+  ansible.builtin.service:
     name: netdata
     state: restarted
   listen:
@@ -12,7 +12,7 @@
 - name: restart netdata docker
   become: true
   ignore_errors: "{{ ansible_check_mode }}"
-  shell: |-
+  ansible.builtin.shell: |-
     test -f "{{ netdata_docker_venv_dir }}/bin/activate" \
       && . "{{ netdata_docker_venv_dir }}/bin/activate"
     docker-compose restart {{ netdata_docker_service_name }}
@@ -21,5 +21,5 @@
 
 - name: apply tmpfiles.d
   become: true
-  command: systemd-tmpfiles --create
+  ansible.builtin.command: systemd-tmpfiles --create
   when: not ansible_virtualization_type in ['docker', 'lxc', 'systemd-nspawn']
