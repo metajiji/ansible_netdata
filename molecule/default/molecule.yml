@@ -24,21 +24,6 @@ platforms:
     groups:
       - netdata
       - netdata_package
-  # netdata package not supplied for el9
-  # netdata tarball not supported outdated systemd from el7
-  - <<: *platform-basic
-    name: molecule-netdata-tarball-el9-${CI_JOB_ID:-1}
-    image: quay.io/centos/centos:stream9
-    groups:
-      - netdata
-      - netdata_tarball
-  - <<: *platform-basic
-    name: molecule-netdata-docker-el9-${CI_JOB_ID:-1}
-    image: quay.io/centos/centos:stream9
-    groups:
-      - netdata
-      - docker
-      - netdata_docker
 
 provisioner:
   name: ansible
