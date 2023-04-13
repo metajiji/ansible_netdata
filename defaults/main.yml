@@ -39,9 +39,9 @@ netdata_docker_venv_packages:
 netdata_docker_service_name: netdata
 
 netdata_docker_registry_login: []
-#   - registry_url: "{{ lookup('env', 'CI_REGISTRY') }}"
-#     password: "{{ lookup('env', 'CI_REGISTRY_PASSWORD') }}"
-#     username: "{{ lookup('env', 'CI_REGISTRY_USER') }}"
+#   - registry_url: "{{ lookup('ansible.builtin.env', 'CI_REGISTRY') }}"
+#     password: "{{ lookup('ansible.builtin.env', 'CI_REGISTRY_PASSWORD') }}"
+#     username: "{{ lookup('ansible.builtin.env', 'CI_REGISTRY_USER') }}"
 #     reauthorize: true
 
 netdata_docker_remove_orphans: false

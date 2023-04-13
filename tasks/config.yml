@@ -14,8 +14,9 @@
       | unique | list
     }}
   vars:
-    _var_names_list: "{{ lookup('varnames', '^netdata_config_(ya?ml|ini)', wantlist=True) }}"
-    _config_files_list: "{{ lookup('vars', *_var_names_list, wantlist=True) | map(attribute='path') | list }}"
+    _var_names_list: "{{ lookup('ansible.builtin.varnames', '^netdata_config_(ya?ml|ini)', wantlist=True) }}"
+    _config_files_list: >-
+      {{ lookup('ansible.builtin.vars', *_var_names_list, wantlist=True) | map(attribute='path') | list }}
 
 - name: Disable telemetry (send anonymous statistic)
   become: true
@@ -56,7 +57,7 @@
     mode: 0644
     dest: "{{ configfile_path }}"
     content: |-
-      {{ lookup('config', 'DEFAULT_MANAGED_STR', on_missing='skip') | comment(decoration='#') }}
+      {{ lookup('ansible.builtin.config', 'DEFAULT_MANAGED_STR', on_missing='skip') | comment(decoration='#') }}
       {% for section in configfile.data.keys() | sort %}
       {% if section %}
 
@@ -66,11 +67,11 @@
       {{ option }}={{ configfile.data[section][option] }}
       {% endfor %}
       {% endfor %}
-  loop: "{{ lookup('varnames', '^netdata_config_ini_', wantlist=True) }}"
+  loop: "{{ lookup('ansible.builtin.varnames', '^netdata_config_ini_', wantlist=True) }}"
   loop_control:
     label: "{{ configfile_path }}"
   vars:
-    configfile: "{{ lookup('vars', item) }}"
+    configfile: "{{ lookup('ansible.builtin.vars', item) }}"
     configfile_path: "{{ netdata_config_dir }}/{{ configfile.path }}"
 
 - name: Set variables for "netdata_config_yml_*" variables
@@ -81,11 +82,11 @@
     mode: 0644
     dest: "{{ configfile_path }}"
     content: |-
-      {{ lookup('config', 'DEFAULT_MANAGED_STR', on_missing='skip') | comment(decoration='#') }}
+      {{ lookup('ansible.builtin.config', 'DEFAULT_MANAGED_STR', on_missing='skip') | comment(decoration='#') }}
       {{ configfile.data | to_nice_yaml }}
-  loop: "{{ lookup('varnames', '^netdata_config_ya?ml_', wantlist=True) }}"
+  loop: "{{ lookup('ansible.builtin.varnames', '^netdata_config_ya?ml_', wantlist=True) }}"
   loop_control:
     label: "{{ configfile_path }}"
   vars:
-    configfile: "{{ lookup('vars', item) }}"
+    configfile: "{{ lookup('ansible.builtin.vars', item) }}"
     configfile_path: "{{ netdata_config_dir }}/{{ configfile.path }}"
