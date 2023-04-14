@@ -24,11 +24,11 @@ platforms:
     groups:
       - netdata
       - netdata_package
-  # - <<: *platform-basic
-  #   name: molecule-netdata-tarball-fc37-${CI_JOB_ID:-1}
-  #   groups:
-  #     - netdata
-  #     - netdata_tarball
+  - <<: *platform-basic
+    name: molecule-netdata-tarball-fc37-${CI_JOB_ID:-1}
+    groups:
+      - netdata
+      - netdata_tarball
   - <<: *platform-basic
     name: molecule-netdata-docker-fc37-${CI_JOB_ID:-1}
     groups:

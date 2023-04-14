@@ -95,7 +95,10 @@ netdata_packages: "{{ _netdata[netdata_installation_type]['packages'] }}"
 #
 netdata_telemetry: false
 
-netdata_config_ini_netdata_conf:
+netdata_config_ini_netdata_conf: >-
+  {{ netdata_default_config_ini_netdata_conf | combine(netdata_extra_config_ini_netdata_conf, recursive=True) }}
+netdata_extra_config_ini_netdata_conf: {}
+netdata_default_config_ini_netdata_conf:
   path: netdata.conf  # Relative path from netdata_config_dir
   data:
     registry:
