@@ -1,10 +1,12 @@
 ---
 
 - name: Install netdata repo
+  when:
+    - netdata_package_repo_enable
   block:
     - name: Check that the "{{ netdata_package_repo_file_path }}" exists
       register: _repo_file
-      stat:
+      ansible.builtin.stat:
         path: "{{ netdata_package_repo_file_path }}"
         get_mime: false
         get_checksum: false
@@ -12,7 +14,7 @@
 
     - name: Download netdata.repo file
       become: true
-      get_url:
+      ansible.builtin.get_url:
         url: "{{ netdata_package_repo_file_url }}"
         dest: "{{ netdata_package_repo_file_path }}"
         mode: 0644
@@ -25,7 +27,7 @@
         Ensure "gpgcheck=1 is in section "{{ netdata_package_repo_name }}"
         in "{{ netdata_package_repo_file_path }}" file
       become: true
-      ini_file:
+      community.general.ini_file:
         path: "{{ netdata_package_repo_file_path }}"
         mode: 0644
         section: "{{ netdata_package_repo_name }}"
@@ -38,7 +40,7 @@
         in section "{{ netdata_package_repo_name }}"
         in "{{ netdata_package_repo_file_path }}" file
       become: true
-      ini_file:
+      community.general.ini_file:
         path: "{{ netdata_package_repo_file_path }}"
         mode: 0644
         section: "{{ netdata_package_repo_name }}"
@@ -51,12 +53,10 @@
 
     - name: Update yum cache
       become: true
-      yum:
+      ansible.builtin.yum:
         update_cache: true
         disablerepo: '*'
         enablerepo: "{{ netdata_package_repo_name }}"
-  when:
-    - netdata_package_repo_enable
 
 - name: Install system packages
-  include_tasks: system_packages.yml
+  ansible.builtin.include_tasks: system_packages.yml

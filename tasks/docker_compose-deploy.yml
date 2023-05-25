@@ -4,7 +4,7 @@
   diff: false
   register: _containers
   ignore_errors: "{{ ansible_check_mode }}"
-  docker_compose:
+  community.docker.docker_compose:
     state: present
     project_src: "{{ dc.project_src }}"
     pull: "{{ dc.always_pull_images | default(False) }}"
@@ -17,7 +17,7 @@
 - name: Check container {{ item }} is ready on host {{ inventory_hostname }}
   register: _docker_container
   ignore_errors: "{{ ansible_check_mode }}"
-  docker_container_info:
+  community.docker.docker_container_info:
     name: "{{ item }}"
   until:
     (

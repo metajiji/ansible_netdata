@@ -3,7 +3,7 @@
 - name: Login to docker registries and pull images via docker-compose
   block:
     - name: Login to registries
-      docker_login:
+      community.docker.docker_login:
         password: "{{ item.password }}"  # noqa no-log-password
         registry_url: "{{ item.registry_url }}"
         state: present
@@ -20,7 +20,7 @@
       become: true
       changed_when: false
       ignore_errors: "{{ ansible_check_mode }}"
-      shell: |-
+      ansible.builtin.shell: |-
         test -f "{{ dc.venv_dir }}/bin/activate" \
           && . "{{ dc.venv_dir }}/bin/activate"
         docker-compose pull
@@ -28,7 +28,7 @@
         chdir: "{{ dc.project_src }}"
   always:
     - name: Logout from registries
-      docker_login:
+      community.docker.docker_login:
         password: "{{ item.password }}"  # noqa no-log-password
         registry_url: "{{ item.registry_url }}"
         state: absent

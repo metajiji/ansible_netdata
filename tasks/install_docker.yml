@@ -1,12 +1,12 @@
 ---
 
 - name: Install system packages
-  include_tasks: system_packages.yml
+  ansible.builtin.include_tasks: system_packages.yml
 
 - name: Install virtualenv packages
   become: true
   ignore_errors: "{{ ansible_check_mode }}"
-  pip:
+  ansible.builtin.pip:
     virtualenv: "{{ netdata_docker_venv_dir }}"
     name: "{{ netdata_docker_venv_packages }}"
     virtualenv_command: "{{ netdata_docker_pip_venv_command }}"
@@ -19,7 +19,7 @@
   changed_when: false
   register: _virtualization
   failed_when: _virtualization.stdout | length == 0
-  command: systemd-detect-virt --vm
+  ansible.builtin.command: systemd-detect-virt --vm
 
 - name: Get all host groups information
   ansible.builtin.getent:
@@ -29,7 +29,7 @@
 - name: Render docker-compose.yml file
   become: true
   ignore_errors: "{{ ansible_check_mode }}"
-  template:
+  ansible.builtin.template:
     src: docker-compose.yml.j2
     dest: "{{ netdata_docker_dir }}/docker-compose.yml"
     owner: root
@@ -44,7 +44,7 @@
     - docker-compose-file
 
 - name: Pull docker images via docker-compose
-  include_tasks:
+  ansible.builtin.include_tasks:
     file: docker_compose-pull.yml
   vars:
     dc:
@@ -60,7 +60,7 @@
       tags: *docker_compose-pull
 
 - name: Include docker_compose tasks
-  include_tasks:
+  ansible.builtin.include_tasks:
     file: docker_compose-deploy.yml
   vars:
     dc:

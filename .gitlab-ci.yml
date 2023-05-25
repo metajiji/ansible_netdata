@@ -5,10 +5,9 @@ stages:
 
 molecule:
   stage: test
-  image: $CI_REGISTRY/docker/molecule/alpine
-  before_script:
+  image: $CI_REGISTRY/docker/molecule
+  script:
     - git config --global
       url."$(expr match "$CI_REPOSITORY_URL" '\(.\+://[^/]*\)')/".insteadOf
       "git@$(expr match "$CI_REPOSITORY_URL" '.\+://.\+@\([^/]*\)'):"
-  script:
     - molecule test

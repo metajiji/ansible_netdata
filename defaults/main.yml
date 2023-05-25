@@ -2,11 +2,11 @@
 
 # Can be tarball, package or docker
 netdata_installation_type: docker
-netdata_release: 1.37.0
+netdata_release: 1.38.1
 
 # https://github.com/netdata/netdata/blob/master/packaging/installer/kickstart.sh
-# curl -sL https://github.com/netdata/netdata/releases/download/v1.37.0/sha256sums.txt | grep 'netdata-v.\+\.gz\.run'
-netdata_tarball_checksum: sha256:c97a54b5be518258dc53d8cdf2ed95ca0a768f0e2ea6a4b57fb16333e7263503
+# curl -sL https://github.com/netdata/netdata/releases/download/v1.38.1/sha256sums.txt | grep 'netdata-v.\+\.gz\.run'
+netdata_tarball_checksum: sha256:315259f10bee93da7e076069d0dfd1208ed98d2e8bb1330c30507946b0ca992c
 netdata_tarball_release: "v{{ netdata_release }}"
 # yamllint disable-line rule:line-length
 netdata_tarball_url: "https://github.com/netdata/netdata/releases/download/{{ netdata_tarball_release }}/netdata-{{ netdata_tarball_release }}.gz.run"
@@ -39,9 +39,9 @@ netdata_docker_venv_packages:
 netdata_docker_service_name: netdata
 
 netdata_docker_registry_login: []
-#   - registry_url: "{{ lookup('env', 'CI_REGISTRY') }}"
-#     password: "{{ lookup('env', 'CI_REGISTRY_PASSWORD') }}"
-#     username: "{{ lookup('env', 'CI_REGISTRY_USER') }}"
+#   - registry_url: "{{ lookup('ansible.builtin.env', 'CI_REGISTRY') }}"
+#     password: "{{ lookup('ansible.builtin.env', 'CI_REGISTRY_PASSWORD') }}"
+#     username: "{{ lookup('ansible.builtin.env', 'CI_REGISTRY_USER') }}"
 #     reauthorize: true
 
 netdata_docker_remove_orphans: false
@@ -95,7 +95,10 @@ netdata_packages: "{{ _netdata[netdata_installation_type]['packages'] }}"
 #
 netdata_telemetry: false
 
-netdata_config_ini_netdata_conf:
+netdata_config_ini_netdata_conf: >-
+  {{ netdata_default_config_ini_netdata_conf | combine(netdata_extra_config_ini_netdata_conf, recursive=True) }}
+netdata_extra_config_ini_netdata_conf: {}
+netdata_default_config_ini_netdata_conf:
   path: netdata.conf  # Relative path from netdata_config_dir
   data:
     registry:

@@ -4,12 +4,12 @@
   become: true
   check_mode: true
   register: _netdata_service
-  service:
+  ansible.builtin.service:
     name: netdata
     state: started
     enabled: true
 
 - name: netdata - service is started and enabled
-  assert:
+  ansible.builtin.assert:
     that:
       - not _netdata_service.changed
