@@ -1,0 +1,6 @@
+---
+
+netdata_extra_config_ini_netdata_conf:
+  data:
+    plugins:
+      ebpf: false

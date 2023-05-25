@@ -2,5 +2,6 @@
 
 netdata_defaults_vars_first_found_list: >-
   {{ ['{role_path}/defaults'.format(**vars)] | product(netdata_first_found_list) | map('join', '/') | list }}
-netdata_distro_vars_file: "{{ q('first_found', netdata_defaults_vars_first_found_list) | first }}"
-netdata_distro_vars: "{{ q('dict', q('file', netdata_distro_vars_file) | first | from_yaml) | items2dict }}"
+netdata_distro_vars_file: "{{ q('ansible.builtin.first_found', netdata_defaults_vars_first_found_list) | first }}"
+netdata_distro_vars: >-
+  {{ q('ansible.builtin.dict', q('ansible.builtin.file', netdata_distro_vars_file) | first | from_yaml) | items2dict }}

@@ -2,7 +2,7 @@
 - name: Install required packages
   become: true
   ignore_errors: "{{ ansible_check_mode }}"
-  yum:
+  ansible.builtin.yum:
     name: >-
       {{
         netdata_required_packages
@@ -22,6 +22,6 @@
 - name: Install netdata packages
   become: true
   ignore_errors: "{{ ansible_check_mode }}"
-  yum:
+  ansible.builtin.yum:
     name: "{{ netdata_packages | union(netdata_packages_extra) | flatten }}"
     state: present

@@ -3,7 +3,7 @@
 - name: Deploy docker-compose.yml
   register: _containers
   check_mode: true
-  docker_compose:
+  community.docker.docker_compose:
     state: present
     project_src: "{{ netdata_docker_dir }}"
   vars:
@@ -12,7 +12,7 @@
 - name: Check container {{ item }} is ready on host {{ inventory_hostname }}
   register: _docker_container
   ignore_errors: "{{ ansible_check_mode }}"
-  docker_container_info:
+  community.docker.docker_container_info:
     name: "{{ item }}"
   until:
     (

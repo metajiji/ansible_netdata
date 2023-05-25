@@ -5,7 +5,7 @@
   until: _netdata_uri is succeeded
   retries: 15
   delay: 1
-  uri:
+  ansible.builtin.uri:
     url: http://127.0.0.1:19999/
     method: GET
     validate_certs: false
@@ -14,4 +14,4 @@
       - 200
 
 - name: Include tasks for {{ netdata_installation_type }}
-  include: "{{ netdata_installation_type }}.yml"
+  ansible.builtin.include_tasks: "{{ netdata_installation_type }}.yml"
