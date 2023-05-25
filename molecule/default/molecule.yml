@@ -1,8 +1,8 @@
 ---
 platforms:
   - &platform-basic
-    name: molecule-netdata-package-fc37-${CI_JOB_ID:-1}
-    image: fedora:37
+    name: molecule-netdata-package-fc38-${CI_JOB_ID:-1}
+    image: fedora:38
     command: /lib/systemd/systemd
     stop_signal: SIGRTMIN+3
     tty: true  # For journald and capture stdout/sdterr via docker
@@ -25,12 +25,12 @@ platforms:
       - netdata
       - netdata_package
   - <<: *platform-basic
-    name: molecule-netdata-tarball-fc37-${CI_JOB_ID:-1}
+    name: molecule-netdata-tarball-fc38-${CI_JOB_ID:-1}
     groups:
       - netdata
       - netdata_tarball
   - <<: *platform-basic
-    name: molecule-netdata-docker-fc37-${CI_JOB_ID:-1}
+    name: molecule-netdata-docker-fc38-${CI_JOB_ID:-1}
     groups:
       - netdata
       - docker

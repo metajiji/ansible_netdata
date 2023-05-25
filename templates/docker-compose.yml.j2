@@ -13,7 +13,7 @@ x-container: &container
 services:
   {{ netdata_docker_service_name }}:
     <<: *container
-    image: ${NETDATA_IMAGE:-netdata/netdata}:${NETDATA_VERSION:-v1.38.1}
+    image: ${NETDATA_IMAGE:-netdata/netdata}:${NETDATA_VERSION:-v1.39.1}
     hostname: ${NETDATA_HOSTNAME:-{{ ansible_fqdn }}}  # set to fqdn of host
     restart: always
     cap_add:
