@@ -59,7 +59,7 @@ systemd-tmpfiles --create
 
 ## Contributing
 
-Issues, feature requests, ideas are can be appreciated
+Issues, feature requests, ideas are can be appreciated.
 
 ## License
 
