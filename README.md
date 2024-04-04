@@ -2,7 +2,7 @@
 
 An Ansible role for setup a netdata.
 
-This role use this bash script: `https://github.com/netdata/netdata/blob/master/packaging/installer/kickstart-static64.sh`
+This role use this bash script: `https://github.com/netdata/netdata/raw/master/packaging/installer/kickstart.sh`
 
 ## Requirements
 
@@ -16,7 +16,7 @@ For more info on the values, read `defaults/main.yml`
 | Variable                          | Default                                                              | Comments (type)                             |
 | :-------------------------------- | :------------------------------------------------------------------- | :------------------------------------------ |
 | `netdata_installation_type`       | `tarball`                                                            | One of `docker`, `tarball` or `package`     |
-| `netdata_release`                 | `1.40.0`                                                             | Type: string                                |
+| `netdata_release`                 | `1.45.2`                                                             | Type: string                                |
 | `netdata_tarball_checksum`        | `sha256:xxx`                                                         | Type: string                                |
 |                                   |                                                                      | Is required for `tarball` installation type |
 | `config_dir`                      | For tarball: `/opt/netdata/etc/netdata`                              |                                             |
@@ -59,7 +59,7 @@ systemd-tmpfiles --create
 
 ## Contributing
 
-Issues, feature requests, ideas are can be appreciated
+Issues, feature requests, ideas are can be appreciated.
 
 ## License
 
