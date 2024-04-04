@@ -33,8 +33,9 @@ netdata_docker_dir: /opt/netdata-docker
 netdata_docker_venv_dir: "{{ netdata_docker_dir }}/venv"
 netdata_docker_pip_venv_command: /usr/bin/python3 -m venv
 netdata_docker_venv_packages:
-  - docker
-  - docker-compose
+  - docker<7.0.0
+  - docker-compose>=1.29.2
+  - pyyaml==5.3.1
 
 netdata_docker_service_name: netdata
 
