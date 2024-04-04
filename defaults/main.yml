@@ -2,7 +2,7 @@
 
 # Can be tarball, package or docker
 netdata_installation_type: docker
-netdata_release: v1.45.2
+netdata_release: 1.45.2
 
 # https://github.com/netdata/netdata/blob/master/packaging/installer/kickstart.sh
 # curl -sL https://github.com/netdata/netdata/releases/download/v1.45.2/sha256sums.txt | grep 'netdata-v.\+\.gz\.run'
