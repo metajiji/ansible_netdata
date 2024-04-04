@@ -2,11 +2,11 @@
 
 # Can be tarball, package or docker
 netdata_installation_type: docker
-netdata_release: 1.40.0
+netdata_release: 1.45.2
 
 # https://github.com/netdata/netdata/blob/master/packaging/installer/kickstart.sh
-# curl -sL https://github.com/netdata/netdata/releases/download/v1.40.0/sha256sums.txt | grep 'netdata-v.\+\.gz\.run'
-netdata_tarball_checksum: sha256:79ddb6e71ba3442112047f980115a429e1d53e3760b8cac9babe1bf06d895b97
+# curl -sL https://github.com/netdata/netdata/releases/download/v1.45.2/sha256sums.txt | grep 'netdata-v.\+\.gz\.run'
+netdata_tarball_checksum: sha256:ed30137665b4b19952349af0ffafc712b13d1347fca04cb512e2d103f127eb26
 netdata_tarball_release: "v{{ netdata_release }}"
 # yamllint disable-line rule:line-length
 netdata_tarball_url: "https://github.com/netdata/netdata/releases/download/{{ netdata_tarball_release }}/netdata-{{ netdata_tarball_release }}.gz.run"
@@ -33,8 +33,9 @@ netdata_docker_dir: /opt/netdata-docker
 netdata_docker_venv_dir: "{{ netdata_docker_dir }}/venv"
 netdata_docker_pip_venv_command: /usr/bin/python3 -m venv
 netdata_docker_venv_packages:
-  - docker
-  - docker-compose
+  - docker<7.0.0
+  - docker-compose>=1.29.2
+  - pyyaml==5.3.1
 
 netdata_docker_service_name: netdata
 
