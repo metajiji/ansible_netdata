@@ -2,11 +2,11 @@
 
 # Can be tarball, package or docker
 netdata_installation_type: docker
-netdata_release: 1.45.2
+netdata_release: 1.45.3
 
 # https://github.com/netdata/netdata/blob/master/packaging/installer/kickstart.sh
-# curl -sL https://github.com/netdata/netdata/releases/download/v1.45.2/sha256sums.txt | grep 'netdata-v.\+\.gz\.run'
-netdata_tarball_checksum: sha256:ed30137665b4b19952349af0ffafc712b13d1347fca04cb512e2d103f127eb26
+# curl -sL https://github.com/netdata/netdata/releases/download/v1.45.3/sha256sums.txt | grep 'netdata-v.\+\.gz\.run'
+netdata_tarball_checksum: sha256:373952969b176c1112787e774a3a4b2dfdec26eaf2b48198d4266f7b25295948
 netdata_tarball_release: "v{{ netdata_release }}"
 # yamllint disable-line rule:line-length
 netdata_tarball_url: "https://github.com/netdata/netdata/releases/download/{{ netdata_tarball_release }}/netdata-{{ netdata_tarball_release }}.gz.run"
