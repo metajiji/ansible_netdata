@@ -9,7 +9,7 @@
   until: _netdata_tarball is succeeded
   retries: 5
   delay: 1
-  ansible.builtin.get_url:
+  ansible.builtin.uri:
     url: "{{ netdata_tarball_url }}"
     dest: "{{ playbook_dir }}/files/{{ netdata_tarball_url | basename }}"
     checksum: "{{ netdata_tarball_checksum }}"
