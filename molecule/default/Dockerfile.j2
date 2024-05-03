@@ -18,6 +18,7 @@ RUN if [ -f /lib/systemd/systemd ]; then \
           done); \
         (cd /usr/lib/systemd/system/multi-user.target.wants/; \
           for i in *; do \
+            [ "$i" = systemd-logind.service ] && continue; \
             [ "$i" = systemd-user-sessions.service ] && continue; \
             rm -f "$i"; \
           done); \
@@ -29,4 +30,7 @@ RUN if [ -f /lib/systemd/systemd ]; then \
         rm -f /lib/systemd/system/anaconda.target.wants/*; \
     fi
 
+{% if item.entrypoint is defined %}
+ENTRYPOINT {{ item.entrypoint }}
+{% endif %}
 CMD ["/lib/systemd/systemd"]

@@ -1,13 +1,26 @@
 ---
 
+variables:
+  MOLECULE_COMMAND: molecule test
+  MOLECULE_IMAGE_NAME: $CI_REGISTRY/docker/molecule
+  MOLECULE_IMAGE_TAG: latest
+
 stages:
   - test
 
 molecule:
   stage: test
-  image: $CI_REGISTRY/docker/molecule
+  image: $MOLECULE_IMAGE_NAME:$MOLECULE_IMAGE_TAG
+  variables:
+    ANSIBLE_CONFIG: ansible.cfg
+    ANSIBLE_FORCE_COLOR: 1
+    PYTHONUNBUFFERED: 1
+    PY_COLORS: 1
   script:
     - git config --global
       url."$(expr match "$CI_REPOSITORY_URL" '\(.\+://[^/]*\)')/".insteadOf
       "git@$(expr match "$CI_REPOSITORY_URL" '.\+://.\+@\([^/]*\)'):"
-    - molecule test
+    - test -f requirements.txt && pip install -r requirements.txt
+    - test -f tox.ini && tox
+    - molecule --version
+    - $MOLECULE_COMMAND
