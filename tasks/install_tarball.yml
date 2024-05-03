@@ -5,6 +5,10 @@
 - name: Download netdata with check (sha256)
   become: false
   run_once: true
+  register: _netdata_tarball
+  until: _netdata_tarball is succeeded
+  retries: 5
+  delay: 1
   ansible.builtin.get_url:
     url: "{{ netdata_tarball_url }}"
     dest: "{{ playbook_dir }}/files/{{ netdata_tarball_url | basename }}"
