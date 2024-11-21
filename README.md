@@ -16,7 +16,7 @@ For more info on the values, read `defaults/main.yml`
 | Variable                          | Default                                                              | Comments (type)                             |
 | :-------------------------------- | :------------------------------------------------------------------- | :------------------------------------------ |
 | `netdata_installation_type`       | `tarball`                                                            | One of `docker`, `tarball` or `package`     |
-| `netdata_release`                 | `1.45.4`                                                             | Type: string                                |
+| `netdata_release`                 | `1.47.5`                                                             | Type: string                                |
 | `netdata_tarball_checksum`        | `sha256:xxx`                                                         | Type: string                                |
 |                                   |                                                                      | Is required for `tarball` installation type |
 | `config_dir`                      | For tarball: `/opt/netdata/etc/netdata`                              |                                             |
