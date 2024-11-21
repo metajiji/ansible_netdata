@@ -55,9 +55,9 @@
         - netdata_package_repo_priority | bool
         - netdata_installation_type == 'package'
 
-    - name: Update yum cache
+    - name: Update dnf cache
       become: true
-      ansible.builtin.yum:
+      ansible.builtin.dnf:
         update_cache: true
         disablerepo: '*'
         enablerepo: "{{ netdata_package_repo_name }}"
